@@ -32,6 +32,9 @@ export function generateServerPackageJson(data: MonorepoTemplateData): string {
   if (hasEventDriven) {
     dependencies[`${scope}/event-driven`] = 'workspace:*';
   }
+  if (data.hasAuth) {
+    dependencies[`${scope}/auth`] = 'workspace:*';
+  }
 
   const devDependencies: Record<string, string> = {
     [`${scope}/config`]: 'workspace:*',

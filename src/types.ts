@@ -1,10 +1,12 @@
-export type ArchitecturePattern = 'hexagonal' | 'vertical-slice';
-export type ClientArchitecturePattern = 'horizontal-slice' | 'clean-architecture';
-export type ApiFramework = 'hono' | 'express' | 'fastify';
-export type ClientFramework = 'tanstack-router';
+export type ArchitecturePattern = "hexagonal" | "vertical-slice";
+export type ClientArchitecturePattern =
+  | "horizontal-slice"
+  | "clean-architecture";
+export type ApiFramework = "hono" | "express" | "fastify" | "go";
+export type ClientFramework = "tanstack-router";
 export type Framework = ApiFramework | ClientFramework;
-export type InboundAdapter = 'http' | 'websocket';
-export type OutboundAdapter = 'in-memory' | 'database' | 'cache';
+export type InboundAdapter = "http" | "websocket";
+export type OutboundAdapter = "in-memory" | "database" | "cache";
 
 export interface TemplateData {
   name: string;
@@ -47,7 +49,7 @@ export interface FileToGenerate {
 
 // --- Monorepo generation types ---
 
-export type InfraPackage = 'db' | 'cache' | 'event-driven';
+export type InfraPackage = "db" | "cache" | "event-driven" | "auth";
 
 export interface MonorepoTemplateData {
   projectName: string;
@@ -59,6 +61,7 @@ export interface MonorepoTemplateData {
   hasDb: boolean;
   hasCache: boolean;
   hasEventDriven: boolean;
+  hasAuth: boolean;
   hasClient: boolean;
 }
 

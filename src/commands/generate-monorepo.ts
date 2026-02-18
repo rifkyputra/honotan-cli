@@ -46,6 +46,12 @@ import { generateEventDrivenIndex } from '../templates/monorepo/packages/event-d
 import { generateEventDrivenTypes } from '../templates/monorepo/packages/event-driven/types.template';
 import { generateRabbitMQClient } from '../templates/monorepo/packages/event-driven/rabbitmq.template';
 
+// packages/auth (optional)
+import { generateAuthPackageJson } from '../templates/monorepo/packages/auth/package-json.template';
+import { generateAuthTsconfig } from '../templates/monorepo/packages/auth/tsconfig.template';
+import { generateAuthIndex } from '../templates/monorepo/packages/auth/index.template';
+import { generateAuthTypes } from '../templates/monorepo/packages/auth/types.template';
+
 // apps/server
 import { generateServerPackageJson } from '../templates/monorepo/apps/server/package-json.template';
 import { generateServerTsconfig } from '../templates/monorepo/apps/server/tsconfig.template';
@@ -65,9 +71,10 @@ export function buildMonorepoTemplateData(
     frameworks,
     apiFramework,
     infraPackages,
-    hasDb: infraPackages.includes('db'),
+    hasDb: infraPackages.includes('db') || infraPackages.includes('auth'),
     hasCache: infraPackages.includes('cache'),
     hasEventDriven: infraPackages.includes('event-driven'),
+    hasAuth: infraPackages.includes('auth'),
     hasClient: frameworks.includes('tanstack-router'),
   };
 }
@@ -158,6 +165,16 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
       { path: 'packages/event-driven/src/index.ts', content: generateEventDrivenIndex(data), description: 'packages/event-driven/src/index.ts' },
       { path: 'packages/event-driven/src/types.ts', content: generateEventDrivenTypes(data), description: 'packages/event-driven/src/types.ts' },
       { path: 'packages/event-driven/src/rabbitmq.ts', content: generateRabbitMQClient(data), description: 'packages/event-driven/src/rabbitmq.ts' },
+    );
+  }
+
+  // packages/auth (conditional)
+  if (data.hasAuth) {
+    files.push(
+      { path: 'packages/auth/package.json', content: generateAuthPackageJson(data), description: 'packages/auth/package.json' },
+      { path: 'packages/auth/tsconfig.json', content: generateAuthTsconfig(data), description: 'packages/auth/tsconfig.json' },
+      { path: 'packages/auth/src/index.ts', content: generateAuthIndex(data), description: 'packages/auth/src/index.ts' },
+      { path: 'packages/auth/src/types.ts', content: generateAuthTypes(data), description: 'packages/auth/src/types.ts' },
     );
   }
 

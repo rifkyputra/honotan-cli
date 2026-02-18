@@ -11,6 +11,10 @@ export function generateRootPackageJson(data: MonorepoTemplateData): string {
     catalog['amqplib'] = '^0.10.4';
   }
 
+  if (data.hasAuth) {
+    catalog['better-auth'] = '^1.2.0';
+  }
+
   const pkg = {
     name: data.projectName,
     private: true,

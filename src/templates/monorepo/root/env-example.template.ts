@@ -32,5 +32,14 @@ export function generateEnvExample(data: MonorepoTemplateData): string {
     );
   }
 
+  if (data.hasAuth) {
+    lines.push(
+      '',
+      '# Auth (better-auth)',
+      'BETTER_AUTH_SECRET=your-secret-key-at-least-32-characters-long',
+      'BETTER_AUTH_URL=http://localhost:3000',
+    );
+  }
+
   return lines.join('\n') + '\n';
 }

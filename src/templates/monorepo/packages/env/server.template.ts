@@ -19,6 +19,11 @@ export function generateEnvServer(data: MonorepoTemplateData): string {
     envVars.push(`    RABBITMQ_URL: z.string().url(),`);
   }
 
+  if (data.hasAuth) {
+    envVars.push(`    BETTER_AUTH_SECRET: z.string().min(32),`);
+    envVars.push(`    BETTER_AUTH_URL: z.string().url(),`);
+  }
+
   return `import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
