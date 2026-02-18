@@ -57,16 +57,16 @@ Install globally with your preferred package manager:
 
 ```bash
 # Using npm
-npm install -g honotan-cli
+npm install -g honotan
 
 # Using bun (recommended for monorepos)
-bun add -g honotan-cli
+bun add -g honotan
 
 # Using bun
-bun add -g honotan-cli
+bun add -g honotan
 
 # Using yarn
-yarn global add honotan-cli
+yarn global add honotan
 ```
 
 ## Quick Start
@@ -103,7 +103,7 @@ To install and work on this project locally:
 
 ```bash
 git clone https://github.com/rifkyputra/honotan-cli.git
-cd honotan-cli
+cd honotan
 ```
 
 ### 2. Install Dependencies
