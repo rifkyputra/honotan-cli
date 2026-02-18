@@ -357,6 +357,16 @@ The client generation follows the **official TanStack Router pattern**:
 
 Contributions are welcome! Please open an issue or submit a pull request.
 
+## Publishing
+
+This project uses GitHub Actions to automate publishing to NPM.
+
+1. **Update Version**: Bump the version in `package.json` (e.g., `npm version patch`).
+2. **Push Changes**: Push your changes to the `main` branch.
+3. **Automated Publish**: The GitHub Action will run tests and publish the new version to NPM automatically.
+
+**Note**: You must add your `NPM_TOKEN` to the repository secrets for this to work.
+
 ## License
 
 MIT
