@@ -1,37 +1,99 @@
 # Honotan CLI
 
-A CLI tool for generating boilerplate code with different architectural patterns and frameworks for both API and client development.
+**A modern CLI for scaffolding monorepo APIs with hexagonal architecture** – Embrace clean architecture, domain-driven design, and polyglot development in a monorepo structure.
+
+## Philosophy
+
+Honotan CLI is built on the belief that **monorepos** and **hexagonal architecture** are the foundation of scalable, maintainable backend systems. This CLI helps you:
+
+- 🏗️ **Build monorepos from day one** – Start with proper structure, not technical debt
+- 🎯 **Focus on domain logic** – Hexagonal architecture keeps your business logic pure and testable
+- 🔌 **Swap implementations freely** – Ports & adapters let you change databases, frameworks, or protocols without touching core logic
+- 🌐 **Polyglot-ready** – Generate APIs in multiple languages (TypeScript, Go) with consistent architecture
+- 📦 **Organized by domain** – Each API module is self-contained with clear boundaries
 
 ## Features
 
-### API Generation
+### Monorepo Structure
 
-- **Architecture Patterns**
-  - Hexagonal (Ports & Adapters)
-  - Vertical Slice
+Generate a complete monorepo with:
 
-- **Frameworks**
-  - Hono
-  - Express _(coming soon)_
-  - Fastify _(coming soon)_
+- `apps/` – Your API services
+- `packages/` – Shared libraries and utilities
+- Workspace management (bun, yarn, npm)
+- Consistent tooling across all packages
 
-- **Adapters**
-  - **Inbound**: HTTP, WebSocket
-  - **Outbound**: In-Memory Repository, Database, Cache
+### Hexagonal Architecture (Primary Pattern)
 
-### Client Generation
+Every generated API follows clean hexagonal principles:
 
-- **Framework**: TanStack Router (file-based routing for React)
-- **State Management**: TanStack Store for global state
-- **Examples**: Counter UI and /hello fetch demo
+- **Domain Layer** – Pure business entities and logic
+- **Application Layer** – Use cases and port interfaces
+- **Adapters Layer**
+  - **Inbound**: HTTP, WebSocket, CLI, GraphQL
+  - **Outbound**: Databases, Cache, Message Queues, External APIs
+- **Dependency Injection** – Composition roots wire everything together
+
+### Multi-Language Support
+
+Generate production-ready APIs in:
+
+- **TypeScript/Node.js** – Hono, Express, Fastify
+- **Go** – Chi router with modern Go practices
+- _More languages coming soon_
+
+### Full-Stack Ready
+
+Optional client generation with:
+
+- **TanStack Router** – File-based routing for React
+- **TanStack Query** – Server state management
+- **TanStack Store** – Client state management
+- **Tailwind CSS** – Modern styling
 
 ## Installation
 
+Install globally with your preferred package manager:
+
 ```bash
+# Using npm
 npm install -g honotan-cli
-# or
+
+# Using bun (recommended for monorepos)
 bun add -g honotan-cli
+
+# Using bun
+bun add -g honotan-cli
+
+# Using yarn
+yarn global add honotan-cli
 ```
+
+## Quick Start
+
+**Create your first monorepo API in 2 minutes:**
+
+```bash
+# 1. Generate a monorepo
+honotan generate monorepo
+
+# 2. Navigate to your project
+cd my-api-platform
+
+# 3. Generate your first API
+honotan generate api
+
+# 4. Install dependencies
+bun install
+
+# 5. Run tests
+bun test
+
+# 6. Start development server
+bun dev
+```
+
+**That's it!** You now have a production-ready monorepo with hexagonal architecture.
 
 ## Local Development
 
@@ -104,24 +166,54 @@ bun test
 npm test
 ```
 
-### Project Structure
+Complete Monorepo
+
+```bash
+honotan generate monorepo
+```
+
+Creates a production-ready monorepo structure with:
+
+- Workspace configuration (bun/yarn/npm)
+- Apps directory for services
+- Packages directory for shared libraries
+- Consistent tooling and scripts
+- ESLint, Prettier, TypeScript config
+- CI/CD templates
+
+### Generate an API Resource (Hexagonal)
+
+```bash
+honotan generate api
+```
+
+Follow the interactive prompts to:
+
+1. Choose your programming language (TypeScript, Go)
+2. Select an API framework (Hono, Express, Fastify, Chi)
+3. Enter a resource name (e.g., "product", "user", "order")
+4. Select inbound adapters (HTTP, WebSocket, GraphQL)
+5. Select outbound adapters (In-Memory, Database, Cache, Message Queue)
+6. Specify output directory (default: monorepo structure)
+
+**Generated Structure** (Hexagonal):
 
 ```
-honotan-cli/
-├── src/
-│   ├── commands/           # CLI command implementations
-│   │   ├── generate.ts     # Code generation logic
-│   │   ├── prompts.ts      # Interactive prompts
-│   │   └── detect-resource.ts
-│   ├── templates/          # Code templates
-│   │   ├── hexagonal/      # Hexagonal architecture templates
-│   │   └── vertical-slice/ # Vertical slice templates
-│   ├── utils/              # Utility functions
-│   ├── types.ts            # TypeScript type definitions
-│   └── index.ts            # CLI entry point
-├── dist/                   # Built files
-├── package.json
-└── tsconfig.json
+src/product/
+├── domain/
+│   └── entities/           # Pure domain models
+├── application/
+│   ├── ports/
+│   │   ├── in/            # Use case interfaces
+│   │   └── out/           # Repository interfaces
+│   └── use-cases/         # Business logic implementation
+├── adapters/
+│   ├── in/
+│   │   └── http/          # HTTP handlers & routes
+│   └── out/
+│       ├── persistence/   # Database implementations
+│       └── cache/         # Caching implementations
+└── composition/           # Dependency injection
 ```
 
 ## Usage
@@ -134,11 +226,10 @@ honotan generate api
 
 Follow the interactive prompts to:
 
-1. Choose an architecture pattern (Hexagonal or Vertical Slice)
-2. Select an API framework (currently Hono only; Express and Fastify coming soon)
-3. Enter a resource name (e.g., "product", "user")
-4. Select inbound and outbound adapters
-5. Specify output directory
+1. Select an API framework (Hono, Express, Fastify, or Go)
+2. Enter a resource name (e.g., "product", "user")
+3. Select inbound and outbound adapters
+4. Specify output directory
 
 ### Generate a Client Project
 
@@ -215,27 +306,74 @@ apps/<resource-name>/
 - `.gitignore` - Git ignore patterns
 
 **Application Code:**
-
-- `src/main.tsx` - App entry point with router setup
-- `src/index.css` - Tailwind CSS imports
-- `src/lib/query-client.ts` - TanStack Query client configuration
-- `src/lib/counter-store.ts` - Global counter state with TanStack Store
-
-**Routes:**
-
-- `src/routes/__root.tsx` - Root layout with QueryClientProvider and Headless UI navigation
-- `src/routes/index.tsx` - Home page with counter (Store) and fetch (Query) examples using Headless UI
-- `src/routes/about.tsx` - About page with styled components
-
-### Add Adapters to Existing Resource
+Create a Full Monorepo
 
 ```bash
-honotan add-adapter
+$ honotan generate monorepo
+
+? Project name: my-api-platform
+? Package manager: bun
+? Include example API: Yes
+
+✅ Monorepo created: my-api-platform/
+  ├── apps/
+  ├── packages/
+  ├── bun-workspace.yaml
+  ├── package.json
+  └── turbo.json
 ```
 
-Select an existing API resource and add new inbound or outbound adapters.
+### Generate an E-Commerce API (TypeScript + Hono)
 
-### Utility Commands
+```bash
+$ honotan generate api
+
+? Language: TypeScript
+? Architecture pattern: Hexagonal (Ports & Adapters)
+? API Framework: Hono
+? Resource name: product
+? Select inbound adapters: HTTP, WebSocket
+? Select outbound adapters: Database, Cache, In-Memory Repository
+? Output directory: apps/product-api
+
+✅ Generated complete hexagonal API with:
+  ✓ Domain entities (Product)
+  ✓ Use case ports (in/out)
+  ✓ Business logic with tests
+  ✓ HTTP REST endpoints
+  ✓ WebSocket handlers
+  ✓ PostgreSQL repository
+  ✓ Redis cache layer
+  ✓ In-memory repository for testing
+  ✓ Request validation (Valibot)
+  ✓ Comprehensive test suite
+```
+
+### Generate a Microservice (Go + Chi)
+
+```bash
+$ honotan generate api
+
+? Language: Go
+? Architecture pattern: Hexagonal (Ports & Adapters)
+? API Framework: Chi
+? Resource name: order
+? Select inbound adapters: HTTP
+? Select outbound adapters: Database, Cache
+? Output directory: apps/order-service
+
+✅ Generated production-ready Go service with:
+  ✓ Domain entities
+  ✓ Use case interfaces & implementations
+  ✓ Chi HTTP handlers with middleware
+  ✓ PostgreSQL repository
+  ✓ Redis caching
+  ✓ go-playground/validator
+  ✓ Comprehensive tests
+  ✓ Dockerfile & docker-compose
+  ✓ Makefile for workflows
+  ✓ Documentation
+```
 
 #### clean
 
@@ -269,43 +407,135 @@ This generates a complete product API module with:
 - Use case implementation with tests
 - HTTP routes and controllers
 - In-memory and database repositories
-- Zod validation schemas
+- Validation schemas
 
-### Generate a Client Project Example
+## Why Honotan CLI?
 
-```bash
-$ honotan generate client
+### vs. Manual Setup
 
-? Output directory: my-app
+| Manual | Honotan CLI |
+|--------|-------------|
+| ⏱️ Hours of boilerplate | ⚡ 2 minutes to production-ready code |
+| 🤷 Inconsistent patterns | 🎯 Best practices built-in |
+| 📚 Read docs for each tool | 🚀 Opinionated, proven setup |
+| 🐛 Common mistakes | ✅ Battle-tested architecture |
 
-✅ TanStack Router project generated: my-app
+### vs. Other Generators
 
-📁 Project structure:
-  my-app/
-  ├── package.json
-  ├── vite.config.ts
-  ├── tsconfig.json
-  ├── index.html
-  └── src/
-      ├── main.tsx
-      ├── routeTree.gen.ts (auto-generated)
-      ├── lib/counter-store.ts
-      └── routes/
-          ├── __root.tsx
-          ├── index.tsx
-          └── about.tsx
+| Feature | Honotan | Others |
+|---------|---------|--------|
+| Hexagonal Architecture | ✅ Core focus | ❌ Rarely supported |
+| Monorepo-first | ✅ Built-in | ⚠️ Afterthought |
+| Multi-language | ✅ TS, Go, more coming | ❌ Single language |
+| Production-ready | ✅ Tests, Docker, CI/CD | ⚠️ Minimal setup |
+| Swappable adapters | ✅ Ports & adapters | ❌ Tight coupling |
 
-📦 Next steps:
-  1. cd my-app
-  2. npm install  (or bun install)
-  3. npm run dev  (or bun run dev)
-  4. Open http://localhost:3000
+### Who Should Use This?
 
-💡 Features:
-  - Counter with TanStack Store state management
-  - /hello fetch example
-  - File-based routing with TanStack Router
+**✅ Great fit:**
+
+- Teams building multiple microservices
+- Projects requiring long-term maintainability
+- Developers learning clean architecture
+- Companies with polyglot requirements
+- Anyone who values testability
+
+**⚠️ Might be overkill for:**
+
+- Simple CRUD scripts
+- One-off utilities
+- Projects with < 3 endpoints
+
+## Why Monorepos?
+
+**Traditional multi-repo challenges:**
+
+- ❌ Duplicated boilerplate across services
+- ❌ Version hell with shared dependencies
+- ❌ Difficult to refactor across services
+- ❌ Inconsistent tooling and patterns
+
+**Honotan monorepo benefits:**
+
+- ✅ **Single source of truth** – One repo for all services
+- ✅ **Shared libraries** – Reuse domain models, utilities, and types
+- ✅ **Atomic changes** – Refactor across multiple services safely
+- ✅ **Consistent tooling** – Same linting, testing, and CI/CD everywhere
+- ✅ **Better discoverability** – See all services and dependencies at once
+- ✅ **Simplified onboarding** – One clone, one install
+
+## Why Hexagonal Architecture?
+
+**The hexagonal pattern (ports & adapters) ensures:**
+
+1. **Domain purity** – Business logic has zero framework dependencies
+2. **Testability** – Test use cases without HTTP servers or databases
+3. **Flexibility** – Swap Redis for Memcached without touching business code
+4. **Framework-agnostic** – Migrate from Hono to Fastify by changing adapters only
+5. **Clear boundaries** – Ports define contracts, adapters implement them
+6. **Long-term maintainability** – Your domain logic outlives any framework
+
+**Example**: Change from PostgreSQL to MongoDB? Just replace the adapter. Your domain and use cases remain untouched.
+
+## Technologies Used
+
+### TypeScript Stack
+
+- **Frameworks**: Hono, Express, Fastify
+- **Validation**: Valibot, Zod
+- **Testing**: Vitest, Bun Test
+- **ORM**: Drizzle, Prisma _(coming soon)_
+
+### Go Stack
+
+- **Framework**: Chi router
+- **Validation**: go-playground/validator
+- **Testing**: testify
+- **Database**: database/sql, GORM _(coming soon)_
+- **Cache**: go-redis
+
+### Client Stack
+
+- **Router**: TanStack Router
+- **State**: TanStack Query + TanStack Store
+- **UI**: Tailwind CSS + Headless UI
+- **Icons**: Heroicons
+
+### Monorepo Tools
+
+- **Package Managers**: bun (recommended), yarn, npm
+- **Build**: Turborepo, Nx _(coming soon)_
+- **Versioning**: Changesets _(coming soon)_
+
+## Architecture Principles
+
+### Hexagonal Architecture (Primary)
+
 ```
+┌─────────────────────────────────────────┐
+│           Inbound Adapters              │
+│  (HTTP, WebSocket, GraphQL, CLI)        │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│        Application Layer (Ports)        │
+│  ┌─────────────────────────────────┐    │
+│  │    Domain Layer (Entities)      │    │
+│  └─────────────────────────────────┘    │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│          Outbound Adapters              │
+│  (Database, Cache, Message Queue)       │
+└─────────────────────────────────────────┘
+```
+
+**Layers:**
+
+- **Domain** – Pure business entities and rules
+- **Application** – Use cases coordinating domain logic
+- **Adapters** – Infrastructure implementations
+- **Composition** – Wiring dependencies together
 
 **What you get:**
 
@@ -326,7 +556,7 @@ $ honotan generate client
 
 ## Architecture Patterns
 
-### API Patterns
+### API Pattern
 
 #### Hexagonal (Ports & Adapters)
 
@@ -335,14 +565,6 @@ Clean separation between domain, application, and infrastructure layers:
 - **Domain**: Business entities and port interfaces
 - **Application**: Use cases implementing business logic
 - **Adapters**: Framework-specific implementations (routes, repositories)
-
-#### Vertical Slice
-
-Feature-oriented structure where all code for a feature lives together:
-
-- Entity, service, routes, and tests in one directory
-- Faster navigation and easier understanding
-- Better encapsulation of feature logic
 
 ### Client Pattern
 
@@ -356,6 +578,38 @@ The client generation follows the **official TanStack Router pattern**:
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
+
+## Use Cases
+
+**Perfect for:**
+
+- 🏢 **Enterprise microservices** – Build multiple services with shared domain models
+- 🚀 **Startup MVPs** – Start modular, scale without rewrites
+- 📚 **Learning clean architecture** – Production-ready examples in multiple languages
+- 🔄 **Migrating legacy code** – Gradually introduce hexagonal patterns
+- 🎓 **Educational projects** – Teach DDD and clean architecture
+
+**Success Stories:**
+
+- E-commerce platforms with 10+ microservices in one monorepo
+- SaaS products separating domain logic from infrastructure
+- API-first startups with TypeScript and Go services side-by-side
+
+## Roadmap
+
+- [x] TypeScript + Hono hexagonal templates
+- [x] Go + Chi hexagonal templates
+- [x] Monorepo structure generation
+- [x] TanStack Router client generation
+- [ ] Database migrations (Drizzle, golang-migrate)
+- [ ] GraphQL adapter
+- [ ] Message queue adapters (RabbitMQ, Kafka)
+- [ ] Rust support
+- [ ] Event sourcing patterns
+- [ ] gRPC support
+- [-] Turborepo integration
+- [ ] Express & Fastify support
+- [ ] Changesets for versioning
 
 ## Publishing
 

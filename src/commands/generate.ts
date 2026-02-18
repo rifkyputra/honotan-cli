@@ -27,13 +27,6 @@ import * as hexFastify from "../templates/hexagonal/fastify/index";
 import * as hexTanStack from "../templates/hexagonal/tanstack-router/index";
 // Go templates
 import * as hexGo from "../templates/hexagonal/go/index";
-// Vertical slice shared templates
-import * as vsShared from "../templates/vertical-slice/shared/index";
-// Vertical slice framework-specific templates
-import * as vsHono from "../templates/vertical-slice/hono/index";
-import * as vsExpress from "../templates/vertical-slice/express/index";
-import * as vsFastify from "../templates/vertical-slice/fastify/index";
-import * as vsTanStack from "../templates/vertical-slice/tanstack-router/index";
 
 interface TemplateRegistry {
   collectDomainFiles(
@@ -462,224 +455,7 @@ function buildHexagonalRegistry(
   };
 }
 
-// --- Vertical Slice registries ---
-
-function buildVerticalSliceRegistry(
-  shared: typeof vsShared,
-  fw: typeof vsHono | typeof vsExpress | typeof vsFastify | typeof vsTanStack,
-  frameworkName: Framework,
-): TemplateRegistry {
-  return {
-    collectDomainFiles(resourcePath, data) {
-      return [
-        {
-          path: path.join(resourcePath, `${data.name}.entity.ts`),
-          content: shared.generateVsEntityTemplate(data),
-          layer: "Entity",
-        },
-        {
-          path: path.join(resourcePath, `${data.name}.repository.ts`),
-          content: shared.generateVsRepositoryPortTemplate(data),
-          layer: "Repository Port",
-        },
-      ];
-    },
-
-    collectApplicationFiles(resourcePath, data) {
-      // Vertical slice: service is the application layer
-      if (frameworkName === "hono") {
-        return [
-          {
-            path: path.join(resourcePath, `${data.name}.service.ts`),
-            content: (fw as typeof vsHono).generateVsHonoServiceTemplate(data),
-            layer: "Service",
-          },
-        ];
-      } else if (frameworkName === "express") {
-        return [
-          {
-            path: path.join(resourcePath, `${data.name}.service.ts`),
-            content: (fw as typeof vsExpress).generateVsExpressServiceTemplate(
-              data,
-            ),
-            layer: "Service",
-          },
-        ];
-      } else if (frameworkName === "tanstack-router") {
-        return [
-          {
-            path: path.join(resourcePath, `${data.name}.service.ts`),
-            content: (
-              fw as typeof vsTanStack
-            ).generateVsTanStackServiceTemplate(data),
-            layer: "Service",
-          },
-        ];
-      }
-      return [
-        {
-          path: path.join(resourcePath, `${data.name}.service.ts`),
-          content: (fw as typeof vsFastify).generateVsFastifyServiceTemplate(
-            data,
-          ),
-          layer: "Service",
-        },
-      ];
-    },
-
-    collectOutboundFiles(resourcePath, data) {
-      return [
-        {
-          path: path.join(resourcePath, `${data.name}.in-memory.repository.ts`),
-          content: shared.generateVsInMemoryRepositoryTemplate(data),
-          layer: "In-Memory Repository",
-        },
-      ];
-    },
-
-    collectInboundFiles(resourcePath, data) {
-      const files: FileToGenerate[] = [];
-
-      if (frameworkName === "hono") {
-        const h = fw as typeof vsHono;
-        files.push(
-          {
-            path: path.join(resourcePath, `${data.name}.validation.ts`),
-            content: h.generateVsHonoValidationTemplate(data),
-            layer: "Validation",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.handler.ts`),
-            content: h.generateVsHonoHandlerTemplate(data),
-            layer: "Handler",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.routes.ts`),
-            content: h.generateVsHonoRoutesTemplate(data),
-            layer: "Routes",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.test.ts`),
-            content: h.generateVsHonoTestTemplate(data),
-            layer: "Test",
-          },
-        );
-      } else if (frameworkName === "express") {
-        const e = fw as typeof vsExpress;
-        files.push(
-          {
-            path: path.join(resourcePath, `${data.name}.validation.ts`),
-            content: e.generateVsExpressValidationTemplate(data),
-            layer: "Validation",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.handler.ts`),
-            content: e.generateVsExpressHandlerTemplate(data),
-            layer: "Handler",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.routes.ts`),
-            content: e.generateVsExpressRoutesTemplate(data),
-            layer: "Routes",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.test.ts`),
-            content: e.generateVsExpressTestTemplate(data),
-            layer: "Test",
-          },
-        );
-      } else if (frameworkName === "tanstack-router") {
-        const t = fw as typeof vsTanStack;
-        files.push(
-          {
-            path: path.join(resourcePath, `${data.name}.validation.ts`),
-            content: t.generateVsTanStackValidationTemplate(data),
-            layer: "Validation",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.component.ts`),
-            content: t.generateVsTanStackComponentTemplate(data),
-            layer: "Component",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.route.ts`),
-            content: t.generateVsTanStackRouteTemplate(data),
-            layer: "Route",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.detail-route.ts`),
-            content: t.generateVsTanStackDetailRouteTemplate(data),
-            layer: "Detail Route",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.detail-component.ts`),
-            content: t.generateVsTanStackDetailComponentTemplate(data),
-            layer: "Detail Component",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.test.ts`),
-            content: t.generateVsTanStackTestTemplate(data),
-            layer: "Test",
-          },
-        );
-      } else {
-        const f = fw as typeof vsFastify;
-        files.push(
-          {
-            path: path.join(resourcePath, `${data.name}.validation.ts`),
-            content: f.generateVsFastifyValidationTemplate(data),
-            layer: "Validation",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.plugin.ts`),
-            content: f.generateVsFastifyPluginTemplate(data),
-            layer: "Plugin",
-          },
-          {
-            path: path.join(resourcePath, `${data.name}.test.ts`),
-            content: f.generateVsFastifyTestTemplate(data),
-            layer: "Test",
-          },
-        );
-      }
-
-      return files;
-    },
-
-    collectRootFile(resourcePath, data) {
-      if (frameworkName === "hono") {
-        return {
-          path: path.join(resourcePath, "index.ts"),
-          content: (fw as typeof vsHono).generateVsHonoIndexTemplate(data),
-          layer: "Index (wiring)",
-        };
-      } else if (frameworkName === "express") {
-        return {
-          path: path.join(resourcePath, "index.ts"),
-          content: (fw as typeof vsExpress).generateVsExpressIndexTemplate(
-            data,
-          ),
-          layer: "Index (wiring)",
-        };
-      } else if (frameworkName === "tanstack-router") {
-        return {
-          path: path.join(resourcePath, "index.ts"),
-          content: (fw as typeof vsTanStack).generateVsTanStackIndexTemplate(
-            data,
-          ),
-          layer: "Index (barrel)",
-        };
-      }
-      return {
-        path: path.join(resourcePath, "index.ts"),
-        content: (fw as typeof vsFastify).generateVsFastifyIndexTemplate(data),
-        layer: "Index (wiring)",
-      };
-    },
-  };
-}
-
-// --- Registry dispatch table ---
+// --- Go Hexagonal registry ---
 
 function buildGoHexagonalRegistry(go: typeof hexGo): TemplateRegistry {
   return {
@@ -760,7 +536,7 @@ function buildGoHexagonalRegistry(go: typeof hexGo): TemplateRegistry {
           "http",
           `${data.kebabName}_handler.go`,
         ),
-        content: go.generateGoControllerTemplate(data),
+        content: go.generateGoHandlerTemplate(data),
         layer: "HTTP Handler",
       });
       return files;
@@ -777,40 +553,23 @@ function buildGoHexagonalRegistry(go: typeof hexGo): TemplateRegistry {
 }
 
 export function getRegistry(
-  architecture: ArchitecturePattern,
   framework: Framework,
 ): TemplateRegistry {
-  if (architecture === "hexagonal") {
-    switch (framework) {
-      case "hono":
-        return buildHexagonalRegistry(hexShared, hexHono, "hono");
-      case "express":
-        return buildHexagonalRegistry(hexShared, hexExpress, "express");
-      case "fastify":
-        return buildHexagonalRegistry(hexShared, hexFastify, "fastify");
-      case "tanstack-router":
-        return buildHexagonalRegistry(
-          hexShared,
-          hexTanStack,
-          "tanstack-router",
-        );
-      case "go":
-        return buildGoHexagonalRegistry(hexGo);
-    }
-  }
   switch (framework) {
     case "hono":
-      return buildVerticalSliceRegistry(vsShared, vsHono, "hono");
+      return buildHexagonalRegistry(hexShared, hexHono, "hono");
     case "express":
-      return buildVerticalSliceRegistry(vsShared, vsExpress, "express");
+      return buildHexagonalRegistry(hexShared, hexExpress, "express");
     case "fastify":
-      return buildVerticalSliceRegistry(vsShared, vsFastify, "fastify");
+      return buildHexagonalRegistry(hexShared, hexFastify, "fastify");
     case "tanstack-router":
-      return buildVerticalSliceRegistry(
-        vsShared,
-        vsTanStack,
+      return buildHexagonalRegistry(
+        hexShared,
+        hexTanStack,
         "tanstack-router",
       );
+    case "go":
+      return buildGoHexagonalRegistry(hexGo);
   }
 }
 
@@ -848,7 +607,7 @@ export async function generate(
 
     const basePath = path.resolve(process.cwd(), outputDir);
     const resourcePath = path.join(basePath, data.name);
-    const registry = getRegistry(data.architecture, data.framework);
+    const registry = getRegistry(data.framework);
 
     const files: FileToGenerate[] = [
       ...registry.collectDomainFiles(resourcePath, data),
@@ -891,7 +650,7 @@ export async function addAdapters(
       direction === "outbound" ? data.outboundAdapters : [],
     );
 
-    const registry = getRegistry(data.architecture, data.framework);
+    const registry = getRegistry(data.framework);
     let files: FileToGenerate[] = [];
 
     if (direction === "outbound") {

@@ -1,4 +1,4 @@
-export type ArchitecturePattern = "hexagonal" | "vertical-slice";
+export type ArchitecturePattern = "hexagonal";
 export type ClientArchitecturePattern =
   | "horizontal-slice"
   | "clean-architecture";

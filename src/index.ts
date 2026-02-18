@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { generate, addAdapters, buildTemplateData } from "./commands/generate";
+import { generateApi } from "./commands/generate-api";
 import { generateClient } from "./commands/generate-client";
 import {
   buildMonorepoTemplateData,
@@ -10,7 +11,6 @@ import { detectExistingResources } from "./commands/detect-resource";
 import { cleanProject } from "./commands/util";
 import {
   promptAction,
-  promptArchitecture,
   promptFramework,
   promptApiFramework,
   promptResourceName,
@@ -25,16 +25,15 @@ import {
   promptProjectName,
   promptInfraPackages,
 } from "./commands/prompts";
-import type { InboundAdapter, OutboundAdapter } from "./types";
 
 const program = new Command();
 
 program
   .name("honotan")
   .description(
-    "CLI toolkit for generating Hexagonal & Vertical Slice architecture in turbo monorepo",
+    "CLI toolkit for generating Hexagonal architecture in turbo monorepo",
   )
-  .version("0.1.0");
+  .version("0.3.0");
 
 const generateCmd = program
   .command("generate")
@@ -42,38 +41,63 @@ const generateCmd = program
 
 generateCmd
   .command("api")
+  .description("Scaffold a standalone API microservice app")
+  .option("-o, --output <path>", "Output directory", "apps")
+  .action(async (options: { output: string }) => {
+    try {
+      const name = await promptResourceName();
+      const framework = await promptApiFramework();
+      const output = await promptOutputDir(options.output);
+
+      const confirmed = await promptConfirm(
+        `Create standalone API "${name}" (hexagonal, ${framework}) in ${output}/${name}?`,
+      );
+
+      if (!confirmed) {
+        console.log(chalk.yellow("Aborted."));
+        return;
+      }
+
+      await generateApi(name, framework, "hexagonal", output);
+    } catch (error) {
+      console.error(chalk.red("Error:"), error);
+      process.exit(1);
+    }
+  });
+
+generateCmd
+  .command("resource")
   .description("Generate or extend an API resource (interactive)")
   .option("-o, --output <path>", "Output directory", "src")
   .action(async (options: { output: string }) => {
     try {
-      const action = await promptAction();
+      // Check for existing resources first
+      const resources = await detectExistingResources(options.output);
+
+      let action: "new" | "add-adapter" = "new";
+
+      if (resources.length > 0) {
+        // Only ask if resources exist
+        action = await promptAction();
+      }
 
       if (action === "new") {
-        const architecture = await promptArchitecture();
         const framework = await promptApiFramework();
         const name = await promptResourceName();
 
-        let inboundAdapters: InboundAdapter[] = ["http"];
-        let outboundAdapters: OutboundAdapter[] = ["in-memory"];
-
-        if (architecture === "hexagonal") {
-          inboundAdapters = await promptInboundAdapters(framework);
-          outboundAdapters = await promptOutboundAdapters();
-        }
+        const inboundAdapters = await promptInboundAdapters(framework);
+        const outboundAdapters = await promptOutboundAdapters();
 
         const output = await promptOutputDir(options.output);
         const data = buildTemplateData(
           name,
-          architecture,
+          "hexagonal",
           framework,
           inboundAdapters,
           outboundAdapters,
         );
 
-        const summary =
-          architecture === "hexagonal"
-            ? `Generate "${data.capitalizedName}" (${architecture}, ${framework}) with ${inboundAdapters.join(", ")} inbound + ${outboundAdapters.join(", ")} outbound in ${output}?`
-            : `Generate "${data.capitalizedName}" (${architecture}, ${framework}) in ${output}?`;
+        const summary = `Generate "${data.capitalizedName}" (hexagonal, ${framework}) with ${inboundAdapters.join(", ")} inbound + ${outboundAdapters.join(", ")} outbound in ${output}?`;
 
         const confirmed = await promptConfirm(summary);
 
@@ -84,37 +108,7 @@ generateCmd
 
         await generate(data, output);
       } else {
-        const resources = await detectExistingResources(options.output);
-
-        if (resources.length === 0) {
-          console.log(
-            chalk.yellow(`No existing resources found in ${options.output}`),
-          );
-          console.log(
-            chalk.gray(
-              'Create a new resource first with "honotan generate api"',
-            ),
-          );
-          return;
-        }
-
-        // Filter to hexagonal resources only for add-adapter
-        const hexResources = resources.filter(
-          (r) => r.architecture === "hexagonal",
-        );
-        if (hexResources.length === 0) {
-          console.log(
-            chalk.yellow(
-              "Add-adapter is only supported for hexagonal architecture resources.",
-            ),
-          );
-          console.log(
-            chalk.gray("Vertical slice resources are regenerated as a whole."),
-          );
-          return;
-        }
-
-        const resource = await promptExistingResource(hexResources);
+        const resource = await promptExistingResource(resources);
         const direction = await promptAdapterDirection();
 
         if (direction === "inbound") {

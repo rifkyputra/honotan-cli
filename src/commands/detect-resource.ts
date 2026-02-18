@@ -30,34 +30,19 @@ async function detectResource(resourcePath: string, name: string): Promise<Exist
   const architecture = detectArchitecture(resourcePath, name);
   if (!architecture) return null;
 
-  const framework = await detectFramework(resourcePath, name, architecture);
+  const framework = await detectFramework(resourcePath, name);
 
-  if (architecture === 'hexagonal') {
-    return {
-      name,
-      path: resourcePath,
-      architecture,
-      framework,
-      hasHttp: existsSync(path.join(resourcePath, 'adapters', 'in', 'http', `${name}.routes.ts`)) ||
-        existsSync(path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.route.ts`)),
-      hasWebSocket: existsSync(path.join(resourcePath, 'adapters', 'in', 'websocket', `${name}.ws-handler.ts`)),
-      hasInMemory: existsSync(path.join(resourcePath, 'adapters', 'out', 'persistence', `in-memory-${name}.repository.ts`)),
-      hasDatabase: existsSync(path.join(resourcePath, 'adapters', 'out', 'persistence', `database-${name}.repository.ts`)),
-      hasCache: existsSync(path.join(resourcePath, 'adapters', 'out', 'cache', `cache-${name}.repository.ts`)),
-    };
-  }
-
-  // vertical-slice: flat structure
   return {
     name,
     path: resourcePath,
     architecture,
     framework,
-    hasHttp: existsSync(path.join(resourcePath, `${name}.routes.ts`)),
-    hasWebSocket: false, // vertical-slice doesn't have separate websocket adapter
-    hasInMemory: existsSync(path.join(resourcePath, `${name}.in-memory.repository.ts`)),
-    hasDatabase: false,
-    hasCache: false,
+    hasHttp: existsSync(path.join(resourcePath, 'adapters', 'in', 'http', `${name}.routes.ts`)) ||
+      existsSync(path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.route.ts`)),
+    hasWebSocket: existsSync(path.join(resourcePath, 'adapters', 'in', 'websocket', `${name}.ws-handler.ts`)),
+    hasInMemory: existsSync(path.join(resourcePath, 'adapters', 'out', 'persistence', `in-memory-${name}.repository.ts`)),
+    hasDatabase: existsSync(path.join(resourcePath, 'adapters', 'out', 'persistence', `database-${name}.repository.ts`)),
+    hasCache: existsSync(path.join(resourcePath, 'adapters', 'out', 'cache', `cache-${name}.repository.ts`)),
   };
 }
 
@@ -66,32 +51,17 @@ function detectArchitecture(resourcePath: string, name: string): ArchitecturePat
   if (existsSync(path.join(resourcePath, 'domain', 'entities', `${name}.entity.ts`))) {
     return 'hexagonal';
   }
-  // Vertical slice: has <name>.entity.ts at root
-  if (existsSync(path.join(resourcePath, `${name}.entity.ts`))) {
-    return 'vertical-slice';
-  }
   return null;
 }
 
-async function detectFramework(resourcePath: string, name: string, architecture: ArchitecturePattern): Promise<Framework> {
-  let filesToScan: string[] = [];
-
-  if (architecture === 'hexagonal') {
-    filesToScan = [
-      path.join(resourcePath, 'adapters', 'in', 'http', `${name}.controller.ts`),
-      path.join(resourcePath, 'adapters', 'in', 'http', `${name}.handler.ts`),
-      path.join(resourcePath, 'adapters', 'in', 'http', `${name}.routes.ts`),
-      path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.route.ts`),
-      path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.component.ts`),
-    ];
-  } else {
-    filesToScan = [
-      path.join(resourcePath, `${name}.handler.ts`),
-      path.join(resourcePath, `${name}.routes.ts`),
-      path.join(resourcePath, `${name}.route.ts`),
-      path.join(resourcePath, `${name}.component.ts`),
-    ];
-  }
+async function detectFramework(resourcePath: string, name: string): Promise<Framework> {
+  const filesToScan: string[] = [
+    path.join(resourcePath, 'adapters', 'in', 'http', `${name}.controller.ts`),
+    path.join(resourcePath, 'adapters', 'in', 'http', `${name}.handler.ts`),
+    path.join(resourcePath, 'adapters', 'in', 'http', `${name}.routes.ts`),
+    path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.route.ts`),
+    path.join(resourcePath, 'adapters', 'in', 'routes', `${name}.component.ts`),
+  ];
 
   for (const filePath of filesToScan) {
     if (!existsSync(filePath)) continue;

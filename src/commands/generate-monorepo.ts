@@ -17,6 +17,8 @@ import { generateDockerignore } from '../templates/monorepo/root/dockerignore.te
 import { generateDockerfile } from '../templates/monorepo/root/dockerfile.template';
 import { generateDockerCompose } from '../templates/monorepo/root/docker-compose.template';
 import { generateDockerComposeDev } from '../templates/monorepo/root/docker-compose-dev.template';
+import { generateMonorepoReadme } from '../templates/monorepo/root/readme.template';
+import { generateMonorepoAgents } from '../templates/monorepo/root/agents.template';
 
 // packages/config
 import { generateConfigPackageJson } from '../templates/monorepo/packages/config/package-json.template';
@@ -81,7 +83,7 @@ export function buildMonorepoTemplateData(
 
 function collectExampleApiFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
   const templateData = buildTemplateData('hello', 'hexagonal', data.apiFramework, ['http'], ['in-memory']);
-  const registry = getRegistry('hexagonal', data.apiFramework);
+  const registry = getRegistry(data.apiFramework);
   const resourcePath = 'hello';
 
   const apiFiles = [
@@ -122,6 +124,8 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
     { path: 'Dockerfile', content: generateDockerfile(data), description: 'Dockerfile' },
     { path: 'docker-compose.yml', content: generateDockerCompose(data), description: 'docker-compose.yml' },
     { path: 'docker-compose.dev.yml', content: generateDockerComposeDev(data), description: 'docker-compose.dev.yml' },
+    { path: 'README.md', content: generateMonorepoReadme(data), description: 'README.md' },
+    { path: 'AGENTS.md', content: generateMonorepoAgents(data), description: 'AGENTS.md' },
   );
 
   // packages/config

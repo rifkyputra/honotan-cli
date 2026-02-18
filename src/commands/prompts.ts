@@ -90,7 +90,7 @@ export async function promptApiFramework(): Promise<ApiFramework> {
       message: "API Framework:",
       choices: [
         { name: "Hono", value: "hono" },
-        { name: "Go (Echo)", value: "go" },
+        { name: "Go (Chi)", value: "go" },
         // Coming soon:
         // { name: 'Express', value: 'express' },
         // { name: 'Fastify', value: 'fastify' },
