@@ -218,19 +218,20 @@ generateCmd
   .action(async () => {
     try {
       const projectName = await promptProjectName();
-      const framework = await promptFramework();
+      const frameworks = await promptFramework();
       const infraPackages = await promptInfraPackages();
 
       const data = buildMonorepoTemplateData(
         projectName,
-        framework,
+        frameworks,
         infraPackages,
       );
 
+      const frameworkSummary = frameworks.join(", ");
       const infraSummary =
         infraPackages.length > 0 ? ` with ${infraPackages.join(", ")}` : "";
       const confirmed = await promptConfirm(
-        `Create "${projectName}" (${framework} server${infraSummary})?`,
+        `Create "${projectName}" (${frameworkSummary}${infraSummary})?`,
       );
 
       if (!confirmed) {

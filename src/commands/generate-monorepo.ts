@@ -3,8 +3,9 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { writeFile } from '../utils/file-utils';
 import { toKebabCase } from '../utils/string-utils';
-import type { MonorepoTemplateData, MonorepoFileToGenerate, InfraPackage, Framework } from '../types';
+import type { MonorepoTemplateData, MonorepoFileToGenerate, InfraPackage, Framework, ApiFramework } from '../types';
 import { buildTemplateData, getRegistry } from './generate';
+import { buildClientTemplateRegistry } from '../templates/client';
 
 // Root templates
 import { generateRootPackageJson } from '../templates/monorepo/root/package-json.template';
@@ -53,24 +54,27 @@ import { generateServerIndex } from '../templates/monorepo/apps/server/index.tem
 
 export function buildMonorepoTemplateData(
   projectName: string,
-  framework: Framework,
+  frameworks: Framework[],
   infraPackages: InfraPackage[],
 ): MonorepoTemplateData {
+  const apiFramework = (frameworks.find((f) => f !== 'tanstack-router') as ApiFramework) || 'hono';
   return {
     projectName,
     scope: `@${toKebabCase(projectName)}`,
     kebabName: toKebabCase(projectName),
-    framework,
+    frameworks,
+    apiFramework,
     infraPackages,
     hasDb: infraPackages.includes('db'),
     hasCache: infraPackages.includes('cache'),
     hasEventDriven: infraPackages.includes('event-driven'),
+    hasClient: frameworks.includes('tanstack-router'),
   };
 }
 
 function collectExampleApiFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
-  const templateData = buildTemplateData('hello', 'hexagonal', data.framework, ['http'], ['in-memory']);
-  const registry = getRegistry('hexagonal', data.framework);
+  const templateData = buildTemplateData('hello', 'hexagonal', data.apiFramework, ['http'], ['in-memory']);
+  const registry = getRegistry('hexagonal', data.apiFramework);
   const resourcePath = 'hello';
 
   const apiFiles = [
@@ -85,6 +89,15 @@ function collectExampleApiFiles(data: MonorepoTemplateData): MonorepoFileToGener
     path: path.join('apps', 'server', 'src', f.path),
     content: f.content,
     description: `Example API: ${f.layer}`,
+  }));
+}
+
+function collectClientFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
+  const registry = buildClientTemplateRegistry(data.projectName);
+  return Object.entries(registry).map(([filePath, content]) => ({
+    path: path.join('apps', 'client', filePath),
+    content,
+    description: `apps/client/${filePath}`,
   }));
 }
 
@@ -153,11 +166,17 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
     { path: 'apps/server/package.json', content: generateServerPackageJson(data), description: 'apps/server/package.json' },
     { path: 'apps/server/tsconfig.json', content: generateServerTsconfig(data), description: 'apps/server/tsconfig.json' },
     { path: 'apps/server/tsdown.config.ts', content: generateServerTsdownConfig(data), description: 'apps/server/tsdown.config.ts' },
+    { path: 'apps/server/.env.example', content: generateEnvExample(data), description: 'apps/server/.env.example' },
     { path: 'apps/server/src/index.ts', content: generateServerIndex(data), description: 'apps/server/src/index.ts' },
   );
 
   // Example "hello" API resource
   files.push(...collectExampleApiFiles(data));
+
+  // apps/client (conditional — TanStack Router)
+  if (data.hasClient) {
+    files.push(...collectClientFiles(data));
+  }
 
   return files;
 }

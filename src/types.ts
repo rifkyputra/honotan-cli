@@ -53,11 +53,13 @@ export interface MonorepoTemplateData {
   projectName: string;
   scope: string;
   kebabName: string;
-  framework: Framework;
+  frameworks: Framework[];
+  apiFramework: ApiFramework;
   infraPackages: InfraPackage[];
   hasDb: boolean;
   hasCache: boolean;
   hasEventDriven: boolean;
+  hasClient: boolean;
 }
 
 export interface MonorepoFileToGenerate {

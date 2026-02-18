@@ -46,22 +46,20 @@ export async function promptClientArchitecture(): Promise<ClientArchitecturePatt
   return architecture;
 }
 
-export async function promptFramework(): Promise<Framework> {
-  const { framework } = await inquirer.prompt([
+export async function promptFramework(): Promise<Framework[]> {
+  const { frameworks } = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'framework',
-      message: 'Framework:',
+      type: 'checkbox',
+      name: 'frameworks',
+      message: 'Select framework(s):',
       choices: [
-        { name: 'Hono', value: 'hono' },
-        // Coming soon:
-        // { name: 'Express', value: 'express' },
-        // { name: 'Fastify', value: 'fastify' },
-        { name: 'TanStack Router (React)', value: 'tanstack-router' },
+        { name: 'Hono (API server)', value: 'hono' as const, checked: true },
+        { name: 'TanStack Router (React client)', value: 'tanstack-router' as const },
       ],
+      validate: (val: unknown[]) => val.length > 0 || 'Select at least one framework',
     },
   ]);
-  return framework;
+  return frameworks;
 }
 
 export async function promptApiFramework(): Promise<ApiFramework> {

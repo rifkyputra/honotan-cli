@@ -1,11 +1,11 @@
 import type { MonorepoTemplateData } from '../../../../types';
 
 export function generateServerIndex(data: MonorepoTemplateData): string {
-  const { scope, framework } = data;
+  const { scope, apiFramework } = data;
 
-  if (framework === 'hono') {
+  if (apiFramework === 'hono') {
     return generateHonoIndex(scope);
-  } else if (framework === 'express') {
+  } else if (apiFramework === 'express') {
     return generateExpressIndex(scope);
   } else {
     return generateFastifyIndex(scope);

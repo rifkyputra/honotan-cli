@@ -1,5 +1,7 @@
 import { generateCounterStore } from './counter-store.template'
 import { generateQueryClient } from './query-client.template'
+import { generateHelloApi, generateUseHello } from './hello-api.template'
+import { generateEnvExample } from './env-example.template'
 import { generateRootRoute } from './root-route.template'
 import { generateIndexRoute } from './index-route.template'
 import { generateAboutRoute } from './about-route.template'
@@ -35,9 +37,14 @@ export function buildClientTemplateRegistry(projectName: string): TemplateRegist
     'src/index.css': generateIndexCss(),
     'src/routeTree.gen.ts': generateRouteTree(),
 
-    // Lib (Store + Query Client)
+    // Environment
+    '.env.example': generateEnvExample(),
+
+    // Lib (Store + Query Client + API)
     'src/lib/counter-store.ts': generateCounterStore(),
     'src/lib/query-client.ts': generateQueryClient(),
+    'src/lib/hello-api.ts': generateHelloApi(),
+    'src/lib/use-hello.ts': generateUseHello(),
 
     // Routes
     'src/routes/__root.tsx': generateRootRoute(),

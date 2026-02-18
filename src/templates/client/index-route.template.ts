@@ -2,10 +2,10 @@ export function generateIndexRoute(): string {
   return `import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
-import { useQuery } from '@tanstack/react-query'
 import { Button } from '@headlessui/react'
 import { MinusIcon, PlusIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { counterStore, increment, decrement, reset } from '../lib/counter-store'
+import { useHello } from '../lib/use-hello'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -13,18 +13,7 @@ export const Route = createFileRoute('/')({
 
 function HomeComponent() {
   const count = useStore(counterStore)
-  
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['hello'],
-    queryFn: async () => {
-      const response = await fetch('/hello')
-      if (!response.ok) {
-        throw new Error('Server might not be running')
-      }
-      return response.json()
-    },
-    enabled: false, // Don't auto-fetch on mount
-  })
+  const { data, isLoading, error, refetch } = useHello()
 
   return (
     <div className="space-y-12">

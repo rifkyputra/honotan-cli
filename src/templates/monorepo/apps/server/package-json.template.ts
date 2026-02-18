@@ -1,7 +1,7 @@
 import type { MonorepoTemplateData } from '../../../../types';
 
 export function generateServerPackageJson(data: MonorepoTemplateData): string {
-  const { scope, framework, hasDb, hasCache, hasEventDriven } = data;
+  const { scope, apiFramework: framework, hasDb, hasCache, hasEventDriven } = data;
 
   const dependencies: Record<string, string> = {};
 

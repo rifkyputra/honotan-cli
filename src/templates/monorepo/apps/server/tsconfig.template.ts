@@ -1,7 +1,7 @@
 import type { MonorepoTemplateData } from '../../../../types';
 
 export function generateServerTsconfig(data: MonorepoTemplateData): string {
-  const { scope, framework } = data;
+  const { scope, apiFramework: framework } = data;
 
   const compilerOptions: Record<string, unknown> = {
     composite: true,
