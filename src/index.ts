@@ -7,6 +7,7 @@ import {
   buildMonorepoTemplateData,
   generateMonorepo,
 } from "./commands/generate-monorepo";
+import { generatePackage } from "./commands/generate-package";
 import { detectExistingResources } from "./commands/detect-resource";
 import { cleanProject } from "./commands/util";
 import {
@@ -24,6 +25,9 @@ import {
   promptConfirm,
   promptProjectName,
   promptInfraPackages,
+  promptPackageName,
+  promptPackageLanguage,
+  promptPackageTemplate,
 } from "./commands/prompts";
 
 const program = new Command();
@@ -200,6 +204,37 @@ generateCmd
       }
 
       await generateClient(output, resourceName);
+    } catch (error) {
+      console.error(chalk.red("Error:"), error);
+      process.exit(1);
+    }
+  });
+
+generateCmd
+  .command("package")
+  .description("Generate a new package (blank or from a template)")
+  .option("-o, --output <path>", "Output directory")
+  .action(async (options: { output?: string }) => {
+    try {
+      const name = await promptPackageName();
+      const language = await promptPackageLanguage();
+      const template = await promptPackageTemplate(language);
+
+      const shortName = name.includes("/") ? name.split("/").pop()! : name;
+      const defaultOutput = `packages/${shortName}`;
+      const output = await promptOutputDir(options.output || defaultOutput);
+
+      const templateLabel = template === "blank" ? "blank" : template;
+      const confirmed = await promptConfirm(
+        `Create "${name}" (${language}, ${templateLabel}) in ${output}?`,
+      );
+
+      if (!confirmed) {
+        console.log(chalk.yellow("Aborted."));
+        return;
+      }
+
+      await generatePackage(name, template, language, output);
     } catch (error) {
       console.error(chalk.red("Error:"), error);
       process.exit(1);

@@ -320,6 +320,75 @@ export async function promptProjectName(): Promise<string> {
   return name.trim();
 }
 
+export async function promptPackageName(): Promise<string> {
+  const { name } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "Package name (e.g., my-lib or @myproject/my-lib):",
+      validate: (val: string) =>
+        val.trim().length > 0 || "Package name is required",
+    },
+  ]);
+  return name.trim();
+}
+
+export async function promptPackageLanguage(): Promise<"typescript" | "go"> {
+  const { language } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "language",
+      message: "Programming language:",
+      choices: [
+        { name: "TypeScript", value: "typescript" },
+        { name: "Go", value: "go" },
+      ],
+    },
+  ]);
+  return language;
+}
+
+export type PackageTemplate =
+  | "blank"
+  | "env"
+  | "db"
+  | "db-turso"
+  | "cache"
+  | "event-driven"
+  | "auth";
+
+export async function promptPackageTemplate(
+  language: "typescript" | "go",
+): Promise<PackageTemplate> {
+  if (language === "go") {
+    return "blank";
+  }
+
+  const { template } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "template",
+      message: "Select a template:",
+      choices: [
+        { name: "Blank package", value: "blank" },
+        { name: "Env (server + client environment)", value: "env" },
+        { name: "DB (Postgres via Bun.sql)", value: "db" },
+        {
+          name: "DB Turso (SQLite via @libsql/client + Drizzle)",
+          value: "db-turso",
+        },
+        { name: "Cache (Redis via Bun.redis)", value: "cache" },
+        {
+          name: "Event-Driven (RabbitMQ via amqplib)",
+          value: "event-driven",
+        },
+        { name: "Auth (better-auth)", value: "auth" },
+      ],
+    },
+  ]);
+  return template;
+}
+
 export async function promptInfraPackages(): Promise<InfraPackage[]> {
   const { packages } = await inquirer.prompt([
     {
