@@ -45,6 +45,11 @@ import { generateAuthTsconfig } from "../templates/monorepo/packages/auth/tsconf
 import { generateAuthIndex } from "../templates/monorepo/packages/auth/index.template";
 import { generateAuthTypes } from "../templates/monorepo/packages/auth/types.template";
 
+// packages/s3
+import { generateS3PackageJson } from "../templates/monorepo/packages/s3/package-json.template";
+import { generateS3Tsconfig } from "../templates/monorepo/packages/s3/tsconfig.template";
+import { generateS3Index } from "../templates/monorepo/packages/s3/index.template";
+
 // packages/env
 import { generateEnvPackageJson } from "../templates/monorepo/packages/env/package-json.template";
 import { generateEnvTsconfig } from "../templates/monorepo/packages/env/tsconfig.template";
@@ -85,6 +90,8 @@ function buildMonorepoData(
     hasEventDriven: template === "event-driven",
     hasAuth: template === "auth",
     hasClient: template === "env",
+    hasPwa: false,
+    hasS3: template === "s3",
   };
 }
 
@@ -173,6 +180,12 @@ function collectFiles(
         { path: "tsconfig.json", content: generateEnvTsconfig(data) },
         { path: "src/server.ts", content: generateEnvServer(data) },
         { path: "src/client.ts", content: generateEnvClient(data) },
+      ];
+    case "s3":
+      return [
+        { path: "package.json", content: generateS3PackageJson(data) },
+        { path: "tsconfig.json", content: generateS3Tsconfig(data) },
+        { path: "src/index.ts", content: generateS3Index(data) },
       ];
   }
 }
