@@ -1,6 +1,5 @@
 import { describe, test, expect, beforeAll } from 'bun:test';
 import { makeMonorepoData, scaffold } from '../fixtures';
-import type { Awaited } from 'bun';
 
 // ---------------------------------------------------------------------------
 // packages/db  (standard postgres via Bun.sql)

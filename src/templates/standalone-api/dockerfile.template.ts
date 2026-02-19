@@ -1,4 +1,4 @@
-export function generateStandaloneDockerfile(name: string): string {
+export function generateStandaloneDockerfile(): string {
   return `FROM oven/bun:1.3.1-alpine AS base
 WORKDIR /app
 

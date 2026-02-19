@@ -81,7 +81,7 @@ export async function generateApi(
         { path: 'package.json', content: generateStandalonePackageJson(kebabName, framework), description: 'package.json' },
         { path: 'tsconfig.json', content: generateStandaloneTsconfig(), description: 'tsconfig.json' },
         { path: 'tsdown.config.ts', content: generateStandaloneTsdownConfig(), description: 'tsdown.config.ts' },
-        { path: 'Dockerfile', content: generateStandaloneDockerfile(kebabName), description: 'Dockerfile' },
+        { path: 'Dockerfile', content: generateStandaloneDockerfile(), description: 'Dockerfile' },
         { path: 'docker-compose.yml', content: generateStandaloneDockerCompose(kebabName), description: 'docker-compose.yml' },
         { path: '.env.example', content: generateStandaloneEnvExample(kebabName), description: '.env.example' },
         { path: '.gitignore', content: generateStandaloneGitignore(), description: '.gitignore' },
