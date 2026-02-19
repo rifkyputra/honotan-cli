@@ -3,6 +3,7 @@ import type { MonorepoTemplateData } from "../../../../types";
 export function generateRoutesRootTsx(data: MonorepoTemplateData): string {
   return `import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { type QueryClient } from "@tanstack/react-query";
 
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,7 +11,9 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "../index.css";
 
-export interface RouterAppContext {}
+export interface RouterAppContext {
+  queryClient: QueryClient;
+}
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: RootComponent,

@@ -27,6 +27,7 @@ import { generateUiDropdownMenuTsx } from '../templates/monorepo/apps/web/src-co
 import { generateUiSkeletonTsx } from '../templates/monorepo/apps/web/src-components-ui-skeleton.template';
 import { generateUiSonnerTsx } from '../templates/monorepo/apps/web/src-components-ui-sonner.template';
 import { generateWebEnvExample } from '../templates/monorepo/apps/web/env-example.template';
+import { generateLibCounterStoreTs } from '../templates/monorepo/apps/web/src-lib-counter-store.template';
 
 // Root templates
 import { generateRootPackageJson } from '../templates/monorepo/root/package-json.template';
@@ -156,6 +157,7 @@ function collectWebFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
     w('src/routes/__root.tsx', generateRoutesRootTsx(data)),
     w('src/routes/index.tsx', generateRoutesIndexTsx(data)),
     w('src/lib/utils.ts', generateLibUtilsTs(data)),
+    w('src/lib/counter-store.ts', generateLibCounterStoreTs(data)),
     w('src/components/header.tsx', generateHeaderTsx(data)),
     w('src/components/theme-provider.tsx', generateThemeProviderTsx(data)),
     w('src/components/loader.tsx', generateLoaderTsx(data)),

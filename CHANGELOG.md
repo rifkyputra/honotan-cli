@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2] - 2026-02-19
+
+### Added
+
+- **`apps/web` counter example** – `src/lib/counter-store.ts` using `@tanstack/react-store` with `increment`, `decrement`, `reset` actions and `useCounter` hook.
+- **`apps/web` hello API fetch** – `src/routes/index.tsx` uses `@tanstack/react-query` (`useQuery`) to fetch `GET /hello` from `env.VITE_API_URL`, with `Skeleton` loading state.
+- `@tanstack/react-query` (`^5.0.0`) and `@tanstack/react-store` (`^0.7.0`) added to `apps/web` dependencies.
+- `QueryClient` + `QueryClientProvider` wired in `src/main.tsx`; `queryClient` passed via TanStack Router context.
+- `RouterAppContext` in `__root.tsx` typed with `queryClient: QueryClient`.
+
 ## [0.6.1] - 2026-02-19
 
 ### Added
