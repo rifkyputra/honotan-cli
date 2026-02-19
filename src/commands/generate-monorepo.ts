@@ -5,7 +5,27 @@ import { writeFile } from '../utils/file-utils';
 import { toKebabCase } from '../utils/string-utils';
 import type { MonorepoTemplateData, MonorepoFileToGenerate, InfraPackage, Framework, ApiFramework } from '../types';
 import { buildTemplateData, getRegistry } from './generate';
-import { buildClientTemplateRegistry } from '../templates/client';
+
+// apps/web
+import { generateWebPackageJson } from '../templates/monorepo/apps/web/package-json.template';
+import { generateViteConfig as generateWebViteConfig } from '../templates/monorepo/apps/web/vite-config.template';
+import { generateTsConfig as generateWebTsConfig } from '../templates/monorepo/apps/web/tsconfig.template';
+import { generateIndexHtml as generateWebIndexHtml } from '../templates/monorepo/apps/web/index-html.template';
+import { generateMainTsx } from '../templates/monorepo/apps/web/src-main.template';
+import { generateRoutesRootTsx } from '../templates/monorepo/apps/web/src-routes-root.template';
+import { generateRoutesIndexTsx } from '../templates/monorepo/apps/web/src-routes-index.template';
+import { generateIndexCss as generateWebIndexCss } from '../templates/monorepo/apps/web/src-index-css.template';
+import { generateLibUtilsTs } from '../templates/monorepo/apps/web/src-lib-utils.template';
+import { generateLibAuthClientTs } from '../templates/monorepo/apps/web/src-lib-auth-client.template';
+import { generateHeaderTsx } from '../templates/monorepo/apps/web/src-components-header.template';
+import { generateThemeProviderTsx } from '../templates/monorepo/apps/web/src-components-theme-provider.template';
+import { generateLoaderTsx } from '../templates/monorepo/apps/web/src-components-loader.template';
+import { generateModeToggleTsx } from '../templates/monorepo/apps/web/src-components-mode-toggle.template';
+import { generateUserMenuTsx } from '../templates/monorepo/apps/web/src-components-user-menu.template';
+import { generateUiButtonTsx } from '../templates/monorepo/apps/web/src-components-ui-button.template';
+import { generateUiDropdownMenuTsx } from '../templates/monorepo/apps/web/src-components-ui-dropdown-menu.template';
+import { generateUiSkeletonTsx } from '../templates/monorepo/apps/web/src-components-ui-skeleton.template';
+import { generateUiSonnerTsx } from '../templates/monorepo/apps/web/src-components-ui-sonner.template';
 
 // Root templates
 import { generateRootPackageJson } from '../templates/monorepo/root/package-json.template';
@@ -63,6 +83,11 @@ import { generateAuthTsconfig } from '../templates/monorepo/packages/auth/tsconf
 import { generateAuthIndex } from '../templates/monorepo/packages/auth/index.template';
 import { generateAuthTypes } from '../templates/monorepo/packages/auth/types.template';
 
+// packages/s3 (optional)
+import { generateS3PackageJson } from '../templates/monorepo/packages/s3/package-json.template';
+import { generateS3Tsconfig } from '../templates/monorepo/packages/s3/tsconfig.template';
+import { generateS3Index } from '../templates/monorepo/packages/s3/index.template';
+
 // apps/server
 import { generateServerPackageJson } from '../templates/monorepo/apps/server/package-json.template';
 import { generateServerTsconfig } from '../templates/monorepo/apps/server/tsconfig.template';
@@ -88,6 +113,8 @@ export function buildMonorepoTemplateData(
     hasEventDriven: infraPackages.includes('event-driven'),
     hasAuth: infraPackages.includes('auth'),
     hasClient: frameworks.includes('tanstack-router'),
+    hasPwa: infraPackages.includes('pwa'),
+    hasS3: infraPackages.includes('s3'),
   };
 }
 
@@ -111,13 +138,41 @@ function collectExampleApiFiles(data: MonorepoTemplateData): MonorepoFileToGener
   }));
 }
 
-function collectClientFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
-  const registry = buildClientTemplateRegistry(data.projectName);
-  return Object.entries(registry).map(([filePath, content]) => ({
-    path: path.join('apps', 'client', filePath),
+function collectWebFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
+  const w = (filePath: string, content: string): MonorepoFileToGenerate => ({
+    path: path.join('apps', 'web', filePath),
     content,
-    description: `apps/client/${filePath}`,
-  }));
+    description: `apps/web/${filePath}`,
+  });
+
+  const files: MonorepoFileToGenerate[] = [
+    w('package.json', generateWebPackageJson(data)),
+    w('vite.config.ts', generateWebViteConfig(data)),
+    w('tsconfig.json', generateWebTsConfig(data)),
+    w('index.html', generateWebIndexHtml(data)),
+    w('src/main.tsx', generateMainTsx(data)),
+    w('src/index.css', generateWebIndexCss(data)),
+    w('src/routes/__root.tsx', generateRoutesRootTsx(data)),
+    w('src/routes/index.tsx', generateRoutesIndexTsx(data)),
+    w('src/lib/utils.ts', generateLibUtilsTs(data)),
+    w('src/components/header.tsx', generateHeaderTsx(data)),
+    w('src/components/theme-provider.tsx', generateThemeProviderTsx(data)),
+    w('src/components/loader.tsx', generateLoaderTsx(data)),
+    w('src/components/mode-toggle.tsx', generateModeToggleTsx(data)),
+    w('src/components/ui/button.tsx', generateUiButtonTsx(data)),
+    w('src/components/ui/dropdown-menu.tsx', generateUiDropdownMenuTsx(data)),
+    w('src/components/ui/skeleton.tsx', generateUiSkeletonTsx(data)),
+    w('src/components/ui/sonner.tsx', generateUiSonnerTsx(data)),
+  ];
+
+  if (data.hasAuth) {
+    files.push(
+      w('src/lib/auth-client.ts', generateLibAuthClientTs(data)),
+      w('src/components/user-menu.tsx', generateUserMenuTsx(data)),
+    );
+  }
+
+  return files;
 }
 
 function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
@@ -207,6 +262,15 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
     );
   }
 
+  // packages/s3 (conditional)
+  if (data.hasS3) {
+    files.push(
+      { path: 'packages/s3/package.json', content: generateS3PackageJson(data), description: 'packages/s3/package.json' },
+      { path: 'packages/s3/tsconfig.json', content: generateS3Tsconfig(data), description: 'packages/s3/tsconfig.json' },
+      { path: 'packages/s3/src/index.ts', content: generateS3Index(data), description: 'packages/s3/src/index.ts' },
+    );
+  }
+
   // apps/server
   files.push(
     { path: 'apps/server/package.json', content: generateServerPackageJson(data), description: 'apps/server/package.json' },
@@ -219,9 +283,9 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
   // Example "hello" API resource
   files.push(...collectExampleApiFiles(data));
 
-  // apps/client (conditional — TanStack Router)
+  // apps/web (conditional — TanStack Router)
   if (data.hasClient) {
-    files.push(...collectClientFiles(data));
+    files.push(...collectWebFiles(data));
   }
 
   return files;

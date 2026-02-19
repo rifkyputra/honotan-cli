@@ -7,11 +7,11 @@ import { migrate } from "drizzle-orm/libsql/migrator";
 import { env } from "${data.scope}/env/server";
 
 const client = createClient({
-  url: env.TURSO_DATABASE_URL,
-  authToken: env.TURSO_AUTH_TOKEN,
+  url: env.DATABASE_URL,
+  authToken: env.DATABASE_AUTH_TOKEN,
 });
 
-const db = drizzle(client);
+const db = drizzle({ client });
 
 await migrate(db, { migrationsFolder: "./drizzle" });
 

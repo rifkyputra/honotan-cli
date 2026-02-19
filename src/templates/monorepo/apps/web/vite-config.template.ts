@@ -1,16 +1,19 @@
-export function generateViteConfig(options: { hasPwa?: boolean; projectName?: string } = {}): string {
-  const { hasPwa = false, projectName = 'app' } = options;
+import type { MonorepoTemplateData } from "../../../../types";
+import { PORT_WEB } from "../../constants";
 
-  const pwaImport = hasPwa ? `import { VitePWA } from "vite-plugin-pwa";\n` : "";
+export function generateViteConfig(data: MonorepoTemplateData): string {
+  const pwaImport = data.hasPwa
+    ? `import { VitePWA } from "vite-plugin-pwa";\n`
+    : "";
 
-  const pwaPlugin = hasPwa
+  const pwaPlugin = data.hasPwa
     ? `,
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "${projectName}",
-        short_name: "${projectName}",
-        description: "${projectName} - PWA Application",
+        name: "${data.projectName}",
+        short_name: "${data.projectName}",
+        description: "${data.projectName} - PWA Application",
         theme_color: "#0c0c0c",
       },
       pwaAssets: { disabled: false, config: true },
@@ -25,12 +28,15 @@ import path from "node:path";
 import { defineConfig } from "vite";
 ${pwaImport}
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackRouter({ autoCodeSplitting: true }), react()${pwaPlugin}],
+  plugins: [tailwindcss(), tanstackRouter({}), react()${pwaPlugin}],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    port: ${PORT_WEB},
+  },
 });
-`
+`;
 }

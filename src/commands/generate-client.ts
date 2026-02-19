@@ -28,8 +28,6 @@ export async function generateClient(
     'tsconfig.json',
     'tsconfig.node.json',
     'vite.config.ts',
-    'tailwind.config.js',
-    'postcss.config.js',
     'index.html',
     '.gitignore',
     'src/main.tsx',

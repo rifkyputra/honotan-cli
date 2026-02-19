@@ -12,23 +12,27 @@ import { generateIndexHtml } from './index-html.template'
 import { generateMainTsx } from './main.template'
 import { generateGitignore } from './gitignore.template'
 import { generateRouteTree } from './route-tree.template'
-import { generateTailwindConfig } from './tailwind-config.template'
-import { generatePostcssConfig } from './postcss-config.template'
 import { generateIndexCss } from './index-css.template'
 
 export interface TemplateRegistry {
   [filePath: string]: string
 }
 
-export function buildClientTemplateRegistry(projectName: string): TemplateRegistry {
+export interface ClientTemplateOptions {
+  hasPwa?: boolean
+}
+
+export function buildClientTemplateRegistry(
+  projectName: string,
+  options: ClientTemplateOptions = {},
+): TemplateRegistry {
+  const { hasPwa = false } = options
   return {
     // Project configuration files (root level)
-    'package.json': generatePackageJson(projectName),
+    'package.json': generatePackageJson(projectName, { hasPwa }),
     'tsconfig.json': generateTsConfig(),
     'tsconfig.node.json': generateTsConfigNode(),
-    'vite.config.ts': generateViteConfig(),
-    'tailwind.config.js': generateTailwindConfig(),
-    'postcss.config.js': generatePostcssConfig(),
+    'vite.config.ts': generateViteConfig({ hasPwa, projectName }),
     'index.html': generateIndexHtml(projectName),
     '.gitignore': generateGitignore(),
 

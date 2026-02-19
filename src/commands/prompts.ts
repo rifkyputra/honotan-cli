@@ -355,7 +355,8 @@ export type PackageTemplate =
   | "db-turso"
   | "cache"
   | "event-driven"
-  | "auth";
+  | "auth"
+  | "s3";
 
 export async function promptPackageTemplate(
   language: "typescript" | "go",
@@ -383,6 +384,7 @@ export async function promptPackageTemplate(
           value: "event-driven",
         },
         { name: "Auth (better-auth)", value: "auth" },
+        { name: "S3 / Object Storage (aws4fetch — R2, S3, MinIO)", value: "s3" },
       ],
     },
   ]);
@@ -406,6 +408,14 @@ export async function promptInfraPackages(): Promise<InfraPackage[]> {
         {
           name: "Auth (better-auth)",
           value: "auth" as const,
+        },
+        {
+          name: "PWA (vite-plugin-pwa)",
+          value: "pwa" as const,
+        },
+        {
+          name: "S3 / Object Storage (aws4fetch — R2, S3, MinIO)",
+          value: "s3" as const,
         },
       ],
     },

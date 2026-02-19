@@ -31,6 +31,8 @@ export function makeMonorepoData(
     hasEventDriven: infraPackages.includes('event-driven'),
     hasAuth: infraPackages.includes('auth'),
     hasClient: frameworks.includes('tanstack-router'),
+    hasPwa: infraPackages.includes('pwa'),
+    hasS3: infraPackages.includes('s3'),
   };
 
   return { ...base, ...overrides };

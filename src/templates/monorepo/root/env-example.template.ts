@@ -51,5 +51,16 @@ export function generateEnvExample(data: MonorepoTemplateData): string {
     );
   }
 
+  if (data.hasS3) {
+    lines.push(
+      '',
+      '# S3 / Object Storage (aws4fetch — compatible with Cloudflare R2, AWS S3, MinIO)',
+      'S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com',
+      'S3_ACCESS_KEY_ID=your-access-key-id',
+      'S3_SECRET_ACCESS_KEY=your-secret-access-key',
+      'S3_BUCKET=your-bucket-name',
+    );
+  }
+
   return lines.join('\n') + '\n';
 }

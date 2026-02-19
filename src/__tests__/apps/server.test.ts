@@ -41,7 +41,6 @@ describe('apps/server/package.json', () => {
     });
 
     test('has hono dependency', () => expect(pkg['dependencies']?.['hono']).toBeDefined());
-    test('has @hono/node-server', () => expect(pkg['dependencies']?.['@hono/node-server']).toBeDefined());
     test('has valibot for validation', () => expect(pkg['dependencies']?.['valibot']).toBeDefined());
     test('no express or fastify', () => {
       expect(pkg['dependencies']?.['express']).toBeUndefined();
@@ -117,7 +116,7 @@ describe('apps/server/src/index.ts', () => {
     });
 
     test('imports hono', () => expect(content).toContain('from "hono"'));
-    test('imports @hono/node-server', () => expect(content).toContain('@hono/node-server'));
+    test('exports default app (Bun runtime)', () => expect(content).toContain('export default app'));
     test('mounts hello routes via app.route', () => expect(content).toContain('app.route'));
   });
 

@@ -55,9 +55,9 @@ describe('packages/env/src/server.ts', () => {
       content = await gen.read('packages/env/src/server.ts');
     });
 
-    test('includes TURSO vars', () => {
-      expect(content).toContain('TURSO_DATABASE_URL');
-      expect(content).toContain('TURSO_AUTH_TOKEN');
+    test('includes DATABASE vars', () => {
+      expect(content).toContain('DATABASE_URL');
+      expect(content).toContain('DATABASE_AUTH_TOKEN');
     });
   });
 

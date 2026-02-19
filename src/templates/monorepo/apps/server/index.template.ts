@@ -1,11 +1,12 @@
-import type { MonorepoTemplateData } from '../../../../types';
+import type { MonorepoTemplateData } from "../../../../types";
+import { PORT_API } from "../../constants";
 
 export function generateServerIndex(data: MonorepoTemplateData): string {
   const { apiFramework } = data;
 
-  if (apiFramework === 'hono') {
+  if (apiFramework === "hono") {
     return generateHonoIndex(data);
-  } else if (apiFramework === 'express') {
+  } else if (apiFramework === "express") {
     return generateExpressIndex(data);
   } else {
     return generateFastifyIndex(data);
@@ -15,22 +16,28 @@ export function generateServerIndex(data: MonorepoTemplateData): string {
 function generateHonoIndex(data: MonorepoTemplateData): string {
   const { scope, hasAuth } = data;
 
-  const authImport = hasAuth ? `import { auth } from "${scope}/auth";\n` : '';
+  const authImport = hasAuth ? `import { auth } from "${scope}/auth";\n` : "";
   const authRoute = hasAuth
     ? `\n// Auth routes (better-auth)\napp.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));\n`
-    : '';
+    : "";
 
   return `import { env } from "${scope}/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { serve } from "@hono/node-server";
 ${authImport}
-const port = Number(env.PORT ?? 3000);
 const app = new Hono();
 
 app.use(logger());
-app.use("/*", cors({ origin: env.CORS_ORIGIN }));
+app.use(
+  "/*",
+  cors({
+    origin: env.CORS_ORIGIN,
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 
 app.get("/", (c) => c.text("OK"));
 ${authRoute}
@@ -38,26 +45,26 @@ ${authRoute}
 import { helloRoutes } from "./hello";
 app.route("/api", helloRoutes);
 
-serve({ fetch: app.fetch, port }, (info) => {
-  console.log(\`Server running on http://localhost:\${info.port}\`);
-});
+export default app;
 `;
 }
 
 function generateExpressIndex(data: MonorepoTemplateData): string {
   const { scope, hasAuth } = data;
 
-  const authImport = hasAuth ? `import { toNodeHandler } from "better-auth/node";\nimport { auth } from "${scope}/auth";\n` : '';
+  const authImport = hasAuth
+    ? `import { toNodeHandler } from "better-auth/node";\nimport { auth } from "${scope}/auth";\n`
+    : "";
   const authRoute = hasAuth
     ? `\n// Auth routes (better-auth)\napp.all("/api/auth/*", toNodeHandler(auth));\n`
-    : '';
+    : "";
 
   return `import { env } from "${scope}/env/server";
 import express from "express";
 import cors from "cors";
 ${authImport}
 const app = express();
-const port = Number(env.PORT ?? 3000);
+const port = Number(env.PORT ?? ${PORT_API});
 
 app.use(express.json());
 app.use(cors({ origin: env.CORS_ORIGIN }));
@@ -77,16 +84,18 @@ app.listen(port, () => {
 function generateFastifyIndex(data: MonorepoTemplateData): string {
   const { scope, hasAuth } = data;
 
-  const authImport = hasAuth ? `import { toNodeHandler } from "better-auth/node";\nimport { auth } from "${scope}/auth";\n` : '';
+  const authImport = hasAuth
+    ? `import { toNodeHandler } from "better-auth/node";\nimport { auth } from "${scope}/auth";\n`
+    : "";
   const authRoute = hasAuth
     ? `\n// Auth routes (better-auth)\nfastify.all("/api/auth/*", async (request, reply) => {\n  const response = await toNodeHandler(auth)(request.raw, reply.raw);\n  return response;\n});\n`
-    : '';
+    : "";
 
   return `import { env } from "${scope}/env/server";
 import Fastify from "fastify";
 ${authImport}
 const fastify = Fastify({ logger: true });
-const port = Number(env.PORT ?? 3000);
+const port = Number(env.PORT ?? ${PORT_API});
 
 fastify.get("/", async () => "OK");
 ${authRoute}
