@@ -1,7 +1,7 @@
 import type { MonorepoTemplateData } from '../../../types';
 
 export function generateMonorepoAgents(data: MonorepoTemplateData): string {
-  const { projectName, apiFramework, hasClient, hasDb, hasCache, hasEventDriven, hasAuth } = data;
+  const { projectName, apiFramework, hasClient, hasDb, hasDbTurso, hasCache, hasEventDriven, hasAuth } = data;
 
   return `# AI Coding Assistant Guide
 ## Project Overview
@@ -57,7 +57,7 @@ ${projectName}/
 ${hasClient ? `│   └── client/          # Frontend app\n` : ''}├── packages/
 │   ├── config/          # Shared configs
 │   ├── env/             # Env validation
-${hasDb ? `│   ├── db/              # Database\n` : ''}${hasCache ? `│   ├── cache/           # Cache\n` : ''}${hasEventDriven ? `│   ├── event-driven/    # Events/messaging\n` : ''}${hasAuth ? `│   └── auth/            # Authentication\n` : ''}└── turbo.json
+${hasDb ? `│   ├── db/              # Database\n` : ''}${hasDbTurso ? `│   ├── db/              # Turso SQLite\n` : ''}${hasCache ? `│   ├── cache/           # Cache\n` : ''}${hasEventDriven ? `│   ├── event-driven/    # Events/messaging\n` : ''}${hasAuth ? `│   └── auth/            # Authentication\n` : ''}└── turbo.json
 \`\`\`
 
 ## Code Generation Guidelines
@@ -123,7 +123,7 @@ Use workspace aliases for shared packages:
 
 \`\`\`typescript
 import { env } from '@${data.scope}/env/server';
-${hasDb ? `import { db } from '@${data.scope}/db';\n` : ''}${hasCache ? `import { cache } from '@${data.scope}/cache';\n` : ''}${hasAuth ? `import { auth } from '@${data.scope}/auth';\n` : ''}
+${hasDb || hasDbTurso ? `import { db } from '@${data.scope}/db';\n` : ''}${hasCache ? `import { cache } from '@${data.scope}/cache';\n` : ''}${hasAuth ? `import { auth } from '@${data.scope}/auth';\n` : ''}
 \`\`\`
 
 ## Common Patterns
@@ -301,6 +301,21 @@ import { db } from '@${data.scope}/db';
 
 const users = await db.select().from(schema.users);
 \`\`\`
+` : ''}${hasDbTurso ? `
+### @${data.scope}/db
+
+Turso SQLite client (Drizzle ORM + libsql):
+
+\`\`\`typescript
+import { db } from '@${data.scope}/db';
+import * as schema from '@${data.scope}/db/schema';
+
+const users = await db.select().from(schema.users);
+\`\`\`
+
+Run migrations: \`bun --filter @${data.scope}/db db:migrate\`
+Push schema: \`bun --filter @${data.scope}/db db:push\`
+Studio: \`bun --filter @${data.scope}/db db:studio\`
 ` : ''}${hasCache ? `
 ### @${data.scope}/cache
 
@@ -418,7 +433,7 @@ try {
 - **Test Framework**: Vitest (recommended) or Jest
 - **Validation**: Zod
 - **Workspace Scope**: \`@${data.scope}\`
-${hasDb ? `- **Database**: PostgreSQL + Drizzle ORM\n` : ''}${hasCache ? `- **Cache**: Redis\n` : ''}${hasEventDriven ? `- **Message Queue**: RabbitMQ\n` : ''}${hasClient ? `- **Frontend**: React + TanStack Router\n` : ''}
+${hasDb ? `- **Database**: PostgreSQL + Drizzle ORM\n` : ''}${hasDbTurso ? `- **Database**: Turso SQLite + Drizzle ORM\n` : ''}${hasCache ? `- **Cache**: Redis\n` : ''}${hasEventDriven ? `- **Message Queue**: RabbitMQ\n` : ''}${hasClient ? `- **Frontend**: React + TanStack Router\n` : ''}
 ---
 
 **Remember**: The goal is clean, maintainable, testable code. When in doubt, favor simplicity and adherence to hexagonal architecture principles.

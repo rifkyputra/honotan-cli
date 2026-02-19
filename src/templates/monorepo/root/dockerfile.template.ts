@@ -2,7 +2,7 @@ import type { MonorepoTemplateData } from '../../../types';
 
 export function generateDockerfile(data: MonorepoTemplateData): string {
   const conditionalCopyLines: string[] = [];
-  if (data.hasDb) {
+  if (data.hasDb || data.hasDbTurso) {
     conditionalCopyLines.push('COPY packages/db/package.json ./packages/db/');
   }
   if (data.hasCache) {

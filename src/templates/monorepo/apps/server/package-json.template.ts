@@ -1,7 +1,7 @@
 import type { MonorepoTemplateData } from '../../../../types';
 
 export function generateServerPackageJson(data: MonorepoTemplateData): string {
-  const { scope, apiFramework: framework, hasDb, hasCache, hasEventDriven } = data;
+  const { scope, apiFramework: framework, hasDb, hasDbTurso, hasCache, hasEventDriven } = data;
 
   const dependencies: Record<string, string> = {};
 
@@ -23,7 +23,7 @@ export function generateServerPackageJson(data: MonorepoTemplateData): string {
   dependencies[`${scope}/env`] = 'workspace:*';
 
   // Infra packages
-  if (hasDb) {
+  if (hasDb || hasDbTurso) {
     dependencies[`${scope}/db`] = 'workspace:*';
   }
   if (hasCache) {

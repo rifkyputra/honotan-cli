@@ -16,6 +16,16 @@ export function generateEnvExample(data: MonorepoTemplateData): string {
     );
   }
 
+  if (data.hasDbTurso) {
+    lines.push(
+      '',
+      '# Database (Turso SQLite)',
+      '# For local development you can use: TURSO_DATABASE_URL=file:local.db',
+      'TURSO_DATABASE_URL=libsql://your-db-name.turso.io',
+      'TURSO_AUTH_TOKEN=your-turso-auth-token',
+    );
+  }
+
   if (data.hasCache) {
     lines.push(
       '',

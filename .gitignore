@@ -71,3 +71,7 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# app specific 
+.generated/
+.space/

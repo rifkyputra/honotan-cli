@@ -7,6 +7,12 @@ export function generateRootPackageJson(data: MonorepoTemplateData): string {
     '@types/node': '^22.13.14',
   };
 
+  if (data.hasDbTurso) {
+    catalog['@libsql/client'] = '^0.14.0';
+    catalog['drizzle-orm'] = '^0.41.0';
+    catalog['drizzle-kit'] = '^0.30.1';
+  }
+
   if (data.hasEventDriven) {
     catalog['amqplib'] = '^0.10.4';
   }

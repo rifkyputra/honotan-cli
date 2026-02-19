@@ -8,6 +8,7 @@ export function generateEnvPackageJson(data: MonorepoTemplateData): string {
     type: 'module',
     exports: {
       './server': './src/server.ts',
+      ...(data.hasClient ? { './client': './src/client.ts' } : {}),
     },
     dependencies: {
       '@t3-oss/env-core': '^0.13.1',

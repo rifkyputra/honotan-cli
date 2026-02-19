@@ -1,11 +1,12 @@
 import type { MonorepoTemplateData } from '../../../types';
 
 export function generateMonorepoReadme(data: MonorepoTemplateData): string {
-  const { projectName, apiFramework, hasClient, hasDb, hasCache, hasEventDriven, hasAuth } = data;
+  const { projectName, apiFramework, hasClient, hasDb, hasDbTurso, hasCache, hasEventDriven, hasAuth } = data;
 
   const features = [];
   if (hasClient) features.push('🎨 **Full-stack ready** with TanStack Router + React client');
   if (hasDb) features.push('🗄️ **Database integration** with Drizzle ORM');
+  if (hasDbTurso) features.push('🗄️ **Turso SQLite** with Drizzle ORM + libsql client');
   if (hasCache) features.push('⚡ **Redis caching** for performance');
   if (hasEventDriven) features.push('📨 **Event-driven architecture** with RabbitMQ');
   if (hasAuth) features.push('🔐 **Authentication** ready with shared auth package');
@@ -46,7 +47,7 @@ ${projectName}/
 ${hasClient ? `│   └── client/          # React + TanStack Router client\n` : ''}├── packages/
 │   ├── config/          # Shared TypeScript configs
 │   ├── env/             # Environment variable validation
-${hasDb ? `│   ├── db/              # Database client and schemas\n` : ''}${hasCache ? `│   ├── cache/           # Redis cache client\n` : ''}${hasEventDriven ? `│   ├── event-driven/    # RabbitMQ client and event handlers\n` : ''}${hasAuth ? `│   └── auth/            # Authentication utilities\n` : ''}└── turbo.json           # Turborepo pipeline configuration
+${hasDb ? `│   ├── db/              # Database client and schemas\n` : ''}${hasDbTurso ? `│   ├── db/              # Turso SQLite client and schema\n` : ''}${hasCache ? `│   ├── cache/           # Redis cache client\n` : ''}${hasEventDriven ? `│   ├── event-driven/    # RabbitMQ client and event handlers\n` : ''}${hasAuth ? `│   └── auth/            # Authentication utilities\n` : ''}└── turbo.json           # Turborepo pipeline configuration
 \`\`\`
 
 ## ✨ Features
@@ -281,7 +282,7 @@ docker-compose up -d
 
 Remember to set production environment variables:
 
-${hasDb ? `- \`DATABASE_URL\`: PostgreSQL connection string\n` : ''}${hasCache ? `- \`REDIS_URL\`: Redis connection string\n` : ''}${hasEventDriven ? `- \`RABBITMQ_URL\`: RabbitMQ connection string\n` : ''}- \`PORT\`: Server port (default: 3000)
+${hasDb ? `- \`DATABASE_URL\`: PostgreSQL connection string\n` : ''}${hasDbTurso ? `- \`TURSO_DATABASE_URL\`: Turso database URL (e.g. libsql://your-db.turso.io)\n- \`TURSO_AUTH_TOKEN\`: Turso auth token\n` : ''}${hasCache ? `- \`REDIS_URL\`: Redis connection string\n` : ''}${hasEventDriven ? `- \`RABBITMQ_URL\`: RabbitMQ connection string\n` : ''}- \`PORT\`: Server port (default: 3000)
 - \`NODE_ENV\`: Set to \`production\`
 
 ## 📖 Learn More

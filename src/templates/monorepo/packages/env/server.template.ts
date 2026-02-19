@@ -11,6 +11,11 @@ export function generateEnvServer(data: MonorepoTemplateData): string {
     envVars.push(`    DATABASE_URL: z.string().url(),`);
   }
 
+  if (data.hasDbTurso) {
+    envVars.push(`    TURSO_DATABASE_URL: z.string().url(),`);
+    envVars.push(`    TURSO_AUTH_TOKEN: z.string().optional(),`);
+  }
+
   if (data.hasCache) {
     envVars.push(`    REDIS_URL: z.string().url(),`);
   }

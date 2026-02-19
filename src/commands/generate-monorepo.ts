@@ -28,6 +28,7 @@ import { generateTsconfigBase } from '../templates/monorepo/packages/config/tsco
 import { generateEnvPackageJson } from '../templates/monorepo/packages/env/package-json.template';
 import { generateEnvTsconfig } from '../templates/monorepo/packages/env/tsconfig.template';
 import { generateEnvServer } from '../templates/monorepo/packages/env/server.template';
+import { generateEnvClient } from '../templates/monorepo/packages/env/client.template';
 
 // packages/db (optional)
 import { generateDbPackageJson } from '../templates/monorepo/packages/db/package-json.template';
@@ -47,6 +48,14 @@ import { generateEventDrivenTsconfig } from '../templates/monorepo/packages/even
 import { generateEventDrivenIndex } from '../templates/monorepo/packages/event-driven/index.template';
 import { generateEventDrivenTypes } from '../templates/monorepo/packages/event-driven/types.template';
 import { generateRabbitMQClient } from '../templates/monorepo/packages/event-driven/rabbitmq.template';
+
+// packages/db-turso (optional)
+import { generateDbTursoPackageJson } from '../templates/monorepo/packages/db-turso/package-json.template';
+import { generateDbTursoTsconfig } from '../templates/monorepo/packages/db-turso/tsconfig.template';
+import { generateDbTursoIndex } from '../templates/monorepo/packages/db-turso/index.template';
+import { generateDbTursoSchema } from '../templates/monorepo/packages/db-turso/schema.template';
+import { generateDbTursoDrizzleConfig } from '../templates/monorepo/packages/db-turso/drizzle-config.template';
+import { generateDbTursoMigrate } from '../templates/monorepo/packages/db-turso/migrate.template';
 
 // packages/auth (optional)
 import { generateAuthPackageJson } from '../templates/monorepo/packages/auth/package-json.template';
@@ -74,6 +83,7 @@ export function buildMonorepoTemplateData(
     apiFramework,
     infraPackages,
     hasDb: infraPackages.includes('db') || infraPackages.includes('auth'),
+    hasDbTurso: infraPackages.includes('db-turso'),
     hasCache: infraPackages.includes('cache'),
     hasEventDriven: infraPackages.includes('event-driven'),
     hasAuth: infraPackages.includes('auth'),
@@ -140,6 +150,9 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
     { path: 'packages/env/tsconfig.json', content: generateEnvTsconfig(data), description: 'packages/env/tsconfig.json' },
     { path: 'packages/env/src/server.ts', content: generateEnvServer(data), description: 'packages/env/src/server.ts' },
   );
+  if (data.hasClient) {
+    files.push({ path: 'packages/env/src/client.ts', content: generateEnvClient(data), description: 'packages/env/src/client.ts' });
+  }
 
   // packages/db (conditional)
   if (data.hasDb) {
@@ -148,6 +161,18 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
       { path: 'packages/db/tsconfig.json', content: generateDbTsconfig(data), description: 'packages/db/tsconfig.json' },
       { path: 'packages/db/src/index.ts', content: generateDbIndex(data), description: 'packages/db/src/index.ts' },
       { path: 'packages/db/src/types.ts', content: generateDbTypes(data), description: 'packages/db/src/types.ts' },
+    );
+  }
+
+  // packages/db-turso (conditional)
+  if (data.hasDbTurso) {
+    files.push(
+      { path: 'packages/db/package.json', content: generateDbTursoPackageJson(data), description: 'packages/db/package.json' },
+      { path: 'packages/db/tsconfig.json', content: generateDbTursoTsconfig(data), description: 'packages/db/tsconfig.json' },
+      { path: 'packages/db/drizzle.config.ts', content: generateDbTursoDrizzleConfig(data), description: 'packages/db/drizzle.config.ts' },
+      { path: 'packages/db/src/index.ts', content: generateDbTursoIndex(data), description: 'packages/db/src/index.ts' },
+      { path: 'packages/db/src/schema.ts', content: generateDbTursoSchema(data), description: 'packages/db/src/schema.ts' },
+      { path: 'packages/db/src/migrate.ts', content: generateDbTursoMigrate(data), description: 'packages/db/src/migrate.ts' },
     );
   }
 

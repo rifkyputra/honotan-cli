@@ -49,7 +49,7 @@ export interface FileToGenerate {
 
 // --- Monorepo generation types ---
 
-export type InfraPackage = "db" | "cache" | "event-driven" | "auth";
+export type InfraPackage = "db" | "db-turso" | "cache" | "event-driven" | "auth";
 
 export interface MonorepoTemplateData {
   projectName: string;
@@ -59,6 +59,7 @@ export interface MonorepoTemplateData {
   apiFramework: ApiFramework;
   infraPackages: InfraPackage[];
   hasDb: boolean;
+  hasDbTurso: boolean;
   hasCache: boolean;
   hasEventDriven: boolean;
   hasAuth: boolean;

@@ -328,6 +328,7 @@ export async function promptInfraPackages(): Promise<InfraPackage[]> {
       message: "Select optional infrastructure packages to include:",
       choices: [
         { name: "DB (Postgres via Bun.sql)", value: "db" as const },
+        { name: "DB (Turso SQLite via @libsql/client + Drizzle)", value: "db-turso" as const },
         { name: "Cache (Redis via Bun.redis)", value: "cache" as const },
         {
           name: "Event-Driven (RabbitMQ via amqplib)",
