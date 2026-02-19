@@ -12,7 +12,6 @@ export function generateDbPackageJson(data: MonorepoTemplateData): string {
     },
     devDependencies: {
       [`${data.scope}/config`]: 'workspace:*',
-      '@types/node': 'catalog:',
       typescript: 'catalog:',
     },
   };

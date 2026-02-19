@@ -17,7 +17,6 @@ export function generateAuthPackageJson(data: MonorepoTemplateData): string {
     },
     devDependencies: {
       [`${data.scope}/config`]: 'workspace:*',
-      '@types/node': 'catalog:',
       typescript: 'catalog:',
     },
   };

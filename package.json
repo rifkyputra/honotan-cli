@@ -1,6 +1,6 @@
 {
   "name": "honotan",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "CLI toolkit for generating Hexagonal & Vertical Slice architecture in turbo monorepo",
   "keywords": [
     "cli",
@@ -16,6 +16,14 @@
   ],
   "license": "MIT",
   "author": "rifkyputra",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rifkyputra/honotan-cli.git"
+  },
+  "homepage": "https://github.com/rifkyputra/honotan-cli#readme",
+  "bugs": {
+    "url": "https://github.com/rifkyputra/honotan-cli/issues"
+  },
   "type": "module",
   "bin": {
     "honotan": "./dist/index.mjs"

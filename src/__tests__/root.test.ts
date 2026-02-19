@@ -105,8 +105,8 @@ describe('root/.env.example', () => {
   test('includes TURSO vars when hasDbTurso', async () => {
     const gen = await scaffold(makeMonorepoData('test-root-env-turso', { infraPackages: ['db-turso'], hasDbTurso: true }));
     const content = await gen.read('.env.example');
-    expect(content).toContain('TURSO_DATABASE_URL=');
-    expect(content).toContain('TURSO_AUTH_TOKEN=');
+    expect(content).toContain('DATABASE_URL=');
+    expect(content).toContain('DATABASE_AUTH_TOKEN=');
   });
 
   test('includes REDIS_URL when hasCache', async () => {

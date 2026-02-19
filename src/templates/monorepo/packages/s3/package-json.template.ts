@@ -17,7 +17,6 @@ export function generateS3PackageJson(data: MonorepoTemplateData): string {
     },
     devDependencies: {
       [`${data.scope}/config`]: 'workspace:*',
-      '@types/node': 'catalog:',
       typescript: 'catalog:',
     },
   };

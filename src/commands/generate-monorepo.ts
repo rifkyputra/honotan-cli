@@ -26,6 +26,7 @@ import { generateUiButtonTsx } from '../templates/monorepo/apps/web/src-componen
 import { generateUiDropdownMenuTsx } from '../templates/monorepo/apps/web/src-components-ui-dropdown-menu.template';
 import { generateUiSkeletonTsx } from '../templates/monorepo/apps/web/src-components-ui-skeleton.template';
 import { generateUiSonnerTsx } from '../templates/monorepo/apps/web/src-components-ui-sonner.template';
+import { generateWebEnvExample } from '../templates/monorepo/apps/web/env-example.template';
 
 // Root templates
 import { generateRootPackageJson } from '../templates/monorepo/root/package-json.template';
@@ -171,6 +172,8 @@ function collectWebFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
       w('src/components/user-menu.tsx', generateUserMenuTsx(data)),
     );
   }
+
+  files.push(w('.env.example', generateWebEnvExample(data)));
 
   return files;
 }

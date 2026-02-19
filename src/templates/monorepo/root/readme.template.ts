@@ -282,7 +282,7 @@ docker-compose up -d
 
 Remember to set production environment variables:
 
-${hasDb ? `- \`DATABASE_URL\`: PostgreSQL connection string\n` : ''}${hasDbTurso ? `- \`TURSO_DATABASE_URL\`: Turso database URL (e.g. libsql://your-db.turso.io)\n- \`TURSO_AUTH_TOKEN\`: Turso auth token\n` : ''}${hasCache ? `- \`REDIS_URL\`: Redis connection string\n` : ''}${hasEventDriven ? `- \`RABBITMQ_URL\`: RabbitMQ connection string\n` : ''}- \`PORT\`: Server port (default: 3000)
+${hasDb ? `- \`DATABASE_URL\`: PostgreSQL connection string\n` : ''}${hasDbTurso ? `- \`DATABASE_URL\`: Turso database URL (e.g. libsql://your-db.turso.io)\n- \`TURSO_AUTH_TOKEN\`: Turso auth token\n` : ''}${hasCache ? `- \`REDIS_URL\`: Redis connection string\n` : ''}${hasEventDriven ? `- \`RABBITMQ_URL\`: RabbitMQ connection string\n` : ''}- \`PORT\`: Server port (default: 3000)
 - \`NODE_ENV\`: Set to \`production\`
 
 ## 📖 Learn More

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2026-02-19
+
+### Added
+
+- `apps/web/.env.example` generated with `VITE_API_URL` (always) and `VITE_AUTH_URL` (when `hasAuth`).
+- `repository`, `homepage`, and `bugs` fields added to `package.json` for npm page links.
+
+### Fixed
+
+- `generate-package.ts` missing `hasPwa` and `hasS3` fields on `MonorepoTemplateData` object — caused `tsc` to error.
+- `generate-package.ts` missing `case "s3"` in `collectFiles` switch — caused implicit `undefined` return type error.
+
 ## [0.6.0] - 2026-02-19
 
 ### Added

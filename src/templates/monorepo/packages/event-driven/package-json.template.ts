@@ -16,7 +16,6 @@ export function generateEventDrivenPackageJson(data: MonorepoTemplateData): stri
     devDependencies: {
       [`${data.scope}/config`]: 'workspace:*',
       '@types/amqplib': '^0.10.5',
-      '@types/node': 'catalog:',
       typescript: 'catalog:',
     },
   };
