@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3] - 2026-02-21
+
+### Added
+
+- **`AGENTS.md` honotan CLI section** – Generated `AGENTS.md` now includes a "Code Generation with honotan CLI" section documenting all `honotan generate` and `honotan util` commands, so AI agents working in a generated monorepo know to use the CLI instead of manually writing hexagonal architecture files.
+- `honotan generate resource` listed as the #1 best practice for AI assistants in `AGENTS.md`.
+
 ## [0.6.2] - 2026-02-19
 
 ### Added

@@ -349,6 +349,61 @@ const user = await verifyToken(token);
 const hash = await hashPassword(password);
 \`\`\`
 ` : ''}
+## Code Generation with honotan CLI
+
+**IMPORTANT**: Instead of manually writing hexagonal architecture files, use the \`honotan\` CLI to scaffold them correctly.
+
+### Generate a new API resource (hexagonal layers)
+
+\`\`\`bash
+honotan generate resource
+\`\`\`
+
+Interactively scaffolds all layers for a new resource:
+- Domain entity + ports
+- Application use cases + use case tests
+- Inbound adapters (HTTP controller, routes, validation)
+- Outbound adapters (in-memory, database, cache)
+- Composition root
+
+Run from the **monorepo root** or inside \`apps/server/\`.
+
+### Add adapters to an existing resource
+
+\`\`\`bash
+honotan generate resource
+# → Select "Add adapter to existing resource"
+# → Pick the resource, choose inbound or outbound
+\`\`\`
+
+### Generate a new package
+
+\`\`\`bash
+honotan generate package
+\`\`\`
+
+Scaffolds a new package under \`packages/\` (TypeScript or Go, blank or from a template).
+
+### Generate a standalone API app
+
+\`\`\`bash
+honotan generate api
+\`\`\`
+
+Creates a new standalone hexagonal API app into \`apps/\`.
+
+### Scaffold a full monorepo from scratch
+
+\`\`\`bash
+honotan generate monorepo
+\`\`\`
+
+### Utility
+
+\`\`\`bash
+honotan util clean   # Remove node_modules, dist, .turbo, build artifacts
+\`\`\`
+
 ## Package Management Commands
 
 \`\`\`bash
@@ -416,16 +471,17 @@ try {
 
 ## Best Practices for AI Assistants
 
-1. ✅ **Always generate hexagonal architecture** - don't mix layers
-2. ✅ **Create comprehensive tests** - especially for domain logic
-3. ✅ **Follow TypeScript best practices** - use strict types
-4. ✅ **Use existing patterns** - check similar resources for reference
-5. ✅ **Keep dependencies minimal** - especially in domain/application layers
-6. ✅ **Document complex logic** - add JSDoc comments
-7. ✅ **Handle errors properly** - use custom error classes
-8. ✅ **Validate inputs** - use Zod schemas for validation
-9. ✅ **Use workspace packages** - import from \`@${data.scope}/*\`
-10. ✅ **Run tests after changes** - ensure nothing breaks
+1. ✅ **Use \`honotan generate resource\`** - scaffold new resources via CLI, not manually
+2. ✅ **Always generate hexagonal architecture** - don't mix layers
+3. ✅ **Create comprehensive tests** - especially for domain logic
+4. ✅ **Follow TypeScript best practices** - use strict types
+5. ✅ **Use existing patterns** - check similar resources for reference
+6. ✅ **Keep dependencies minimal** - especially in domain/application layers
+7. ✅ **Document complex logic** - add JSDoc comments
+8. ✅ **Handle errors properly** - use custom error classes
+9. ✅ **Validate inputs** - use Zod schemas for validation
+10. ✅ **Use workspace packages** - import from \`@${data.scope}/*\`
+11. ✅ **Run tests after changes** - ensure nothing breaks
 
 ## Quick Reference
 

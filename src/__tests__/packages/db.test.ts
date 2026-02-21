@@ -53,6 +53,26 @@ describe('packages/db (turso)', () => {
   test('src/schema.ts exists', () => expect(gen.exists('packages/db/src/schema.ts')).toBe(true));
   test('src/migrate.ts exists', () => expect(gen.exists('packages/db/src/migrate.ts')).toBe(true));
 
+  test('package name uses scope', async () => {
+    const pkg = JSON.parse(await gen.read('packages/db/package.json'));
+    expect(pkg.name).toBe('@test-pkg-turso/db');
+  });
+
+  test('package.json has dotenv dependency', async () => {
+    const pkg = JSON.parse(await gen.read('packages/db/package.json'));
+    expect(pkg.dependencies).toHaveProperty('dotenv');
+  });
+
+  test('package.json has drizzle-orm dependency', async () => {
+    const pkg = JSON.parse(await gen.read('packages/db/package.json'));
+    expect(pkg.dependencies).toHaveProperty('drizzle-orm');
+  });
+
+  test('package.json has drizzle-kit devDependency', async () => {
+    const pkg = JSON.parse(await gen.read('packages/db/package.json'));
+    expect(pkg.devDependencies).toHaveProperty('drizzle-kit');
+  });
+
   test('index uses drizzle + libsql', async () => {
     const content = await gen.read('packages/db/src/index.ts');
     expect(content).toContain('drizzle');
@@ -62,5 +82,28 @@ describe('packages/db (turso)', () => {
   test('schema uses drizzle-orm/sqlite-core', async () => {
     const content = await gen.read('packages/db/src/schema.ts');
     expect(content).toContain('drizzle-orm/sqlite-core');
+  });
+
+  test('drizzle.config.ts loads dotenv from apps/server/.env', async () => {
+    const content = await gen.read('packages/db/drizzle.config.ts');
+    expect(content).toContain('dotenv');
+    expect(content).toContain('apps/server/.env');
+    expect(content).toContain('override: false');
+  });
+
+  test('drizzle.config.ts uses turso dialect', async () => {
+    const content = await gen.read('packages/db/drizzle.config.ts');
+    expect(content).toContain('dialect: "turso"');
+  });
+
+  test('drizzle.config.ts references DATABASE_URL and DATABASE_AUTH_TOKEN', async () => {
+    const content = await gen.read('packages/db/drizzle.config.ts');
+    expect(content).toContain('DATABASE_URL');
+    expect(content).toContain('DATABASE_AUTH_TOKEN');
+  });
+
+  test('migrate.ts references DATABASE_URL', async () => {
+    const content = await gen.read('packages/db/src/migrate.ts');
+    expect(content).toContain('DATABASE_URL');
   });
 });
