@@ -8,11 +8,14 @@ export function generateRootPackageJson(data: MonorepoTemplateData): string {
     dotenv: "^17.2.2",
   };
 
-  if (data.hasDbTurso || data.hasDb) {
+  if (data.hasDbTurso || data.hasDb || data.hasDbSqlite) {
     catalog["@libsql/client"] = "0.15.15";
-    catalog["libsql"] = "0.5.22";
     catalog["drizzle-orm"] = "^0.45.1";
     catalog["drizzle-kit"] = "^0.31.8";
+  }
+
+  if (data.hasDbTurso) {
+    catalog["libsql"] = "0.5.22";
   }
 
   if (data.hasAuth) {
@@ -62,12 +65,14 @@ export function generateRootPackageJson(data: MonorepoTemplateData): string {
     packageManager: "bun@1.3.1",
   } as any; // Cast to any to allow dynamic property assignment safely in TS if needed, though strictly typed is better.
 
-  if (data.hasDbTurso || data.hasDb) {
-    // Add db scripts
+  if (data.hasDbTurso || data.hasDb || data.hasDbSqlite) {
     pkg.scripts["db:push"] = `turbo -F ${data.scope}/db db:push`;
     pkg.scripts["db:studio"] = `turbo -F ${data.scope}/db db:studio`;
     pkg.scripts["db:generate"] = `turbo -F ${data.scope}/db db:generate`;
     pkg.scripts["db:migrate"] = `turbo -F ${data.scope}/db db:migrate`;
+  }
+
+  if (data.hasDbTurso) {
     pkg.scripts["db:local"] = `turbo -F ${data.scope}/db db:local`;
   }
 

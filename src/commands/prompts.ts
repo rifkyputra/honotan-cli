@@ -353,6 +353,7 @@ export type PackageTemplate =
   | "env"
   | "db"
   | "db-turso"
+  | "db-sqlite"
   | "cache"
   | "event-driven"
   | "auth"
@@ -375,8 +376,12 @@ export async function promptPackageTemplate(
         { name: "Env (server + client environment)", value: "env" },
         { name: "DB (Postgres via Bun.sql)", value: "db" },
         {
-          name: "DB Turso (SQLite via @libsql/client + Drizzle)",
+          name: "DB Turso (SQLite via @libsql/client + Drizzle, Turso cloud)",
           value: "db-turso",
+        },
+        {
+          name: "DB SQLite (local SQLite via @libsql/client + Drizzle)",
+          value: "db-sqlite",
         },
         { name: "Cache (Redis via Bun.redis)", value: "cache" },
         {
@@ -399,7 +404,8 @@ export async function promptInfraPackages(): Promise<InfraPackage[]> {
       message: "Select optional infrastructure packages to include:",
       choices: [
         { name: "DB (Postgres via Bun.sql)", value: "db" as const },
-        { name: "DB (Turso SQLite via @libsql/client + Drizzle)", value: "db-turso" as const },
+        { name: "DB (Turso SQLite via @libsql/client + Drizzle, Turso cloud)", value: "db-turso" as const },
+        { name: "DB (local SQLite via @libsql/client + Drizzle)", value: "db-sqlite" as const },
         { name: "Cache (Redis via Bun.redis)", value: "cache" as const },
         {
           name: "Event-Driven (RabbitMQ via amqplib)",

@@ -26,6 +26,14 @@ export function generateEnvExample(data: MonorepoTemplateData): string {
     );
   }
 
+  if (data.hasDbSqlite) {
+    lines.push(
+      '',
+      '# Database (local SQLite)',
+      'DATABASE_URL=file:./local.db',
+    );
+  }
+
   if (data.hasCache) {
     lines.push(
       '',

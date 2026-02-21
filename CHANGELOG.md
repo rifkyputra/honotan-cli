@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2026-02-21
+
+### Added
+
+- **`packages/db-sqlite` template** – Local SQLite via `@libsql/client` + Drizzle ORM. Generates drizzle config (`dialect: "turso"`), schema (sqlite-core), migrate script, and `src/index.ts` without `authToken`. No `libsql` native binding required.
+- `db-sqlite` added to infra package prompt, `PackageTemplate` type, and `generate package` command.
+- `DATABASE_URL=file:./local.db` added to `.env.example` when `hasDbSqlite`. Uses `z.string()` (not `z.string().url()`) to allow `file:` scheme.
+- Root catalog adds `@libsql/client` + drizzle packages for `hasDbSqlite`; `libsql` native binding only added for `hasDbTurso`.
+
 ## [0.6.3] - 2026-02-21
 
 ### Added

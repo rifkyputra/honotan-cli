@@ -79,6 +79,14 @@ import { generateDbTursoSchema } from '../templates/monorepo/packages/db-turso/s
 import { generateDbTursoDrizzleConfig } from '../templates/monorepo/packages/db-turso/drizzle-config.template';
 import { generateDbTursoMigrate } from '../templates/monorepo/packages/db-turso/migrate.template';
 
+// packages/db-sqlite (optional)
+import { generateDbSqlitePackageJson } from '../templates/monorepo/packages/db-sqlite/package-json.template';
+import { generateDbSqliteTsconfig } from '../templates/monorepo/packages/db-sqlite/tsconfig.template';
+import { generateDbSqliteIndex } from '../templates/monorepo/packages/db-sqlite/index.template';
+import { generateDbSqliteSchema } from '../templates/monorepo/packages/db-sqlite/schema.template';
+import { generateDbSqliteDrizzleConfig } from '../templates/monorepo/packages/db-sqlite/drizzle-config.template';
+import { generateDbSqliteMigrate } from '../templates/monorepo/packages/db-sqlite/migrate.template';
+
 // packages/auth (optional)
 import { generateAuthPackageJson } from '../templates/monorepo/packages/auth/package-json.template';
 import { generateAuthTsconfig } from '../templates/monorepo/packages/auth/tsconfig.template';
@@ -111,6 +119,7 @@ export function buildMonorepoTemplateData(
     infraPackages,
     hasDb: infraPackages.includes('db') || infraPackages.includes('auth'),
     hasDbTurso: infraPackages.includes('db-turso'),
+    hasDbSqlite: infraPackages.includes('db-sqlite'),
     hasCache: infraPackages.includes('cache'),
     hasEventDriven: infraPackages.includes('event-driven'),
     hasAuth: infraPackages.includes('auth'),
@@ -233,6 +242,18 @@ function collectFiles(data: MonorepoTemplateData): MonorepoFileToGenerate[] {
       { path: 'packages/db/src/index.ts', content: generateDbTursoIndex(data), description: 'packages/db/src/index.ts' },
       { path: 'packages/db/src/schema.ts', content: generateDbTursoSchema(data), description: 'packages/db/src/schema.ts' },
       { path: 'packages/db/src/migrate.ts', content: generateDbTursoMigrate(data), description: 'packages/db/src/migrate.ts' },
+    );
+  }
+
+  // packages/db-sqlite (conditional)
+  if (data.hasDbSqlite) {
+    files.push(
+      { path: 'packages/db/package.json', content: generateDbSqlitePackageJson(data), description: 'packages/db/package.json' },
+      { path: 'packages/db/tsconfig.json', content: generateDbSqliteTsconfig(data), description: 'packages/db/tsconfig.json' },
+      { path: 'packages/db/drizzle.config.ts', content: generateDbSqliteDrizzleConfig(data), description: 'packages/db/drizzle.config.ts' },
+      { path: 'packages/db/src/index.ts', content: generateDbSqliteIndex(data), description: 'packages/db/src/index.ts' },
+      { path: 'packages/db/src/schema.ts', content: generateDbSqliteSchema(data), description: 'packages/db/src/schema.ts' },
+      { path: 'packages/db/src/migrate.ts', content: generateDbSqliteMigrate(data), description: 'packages/db/src/migrate.ts' },
     );
   }
 

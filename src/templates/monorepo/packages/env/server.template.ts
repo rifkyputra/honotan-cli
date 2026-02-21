@@ -16,6 +16,10 @@ export function generateEnvServer(data: MonorepoTemplateData): string {
     envVars.push(`    DATABASE_AUTH_TOKEN: z.string().optional(),`);
   }
 
+  if (data.hasDbSqlite) {
+    envVars.push(`    DATABASE_URL: z.string(),`);
+  }
+
   if (data.hasCache) {
     envVars.push(`    REDIS_URL: z.string().url(),`);
   }

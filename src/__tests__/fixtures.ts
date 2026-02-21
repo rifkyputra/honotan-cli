@@ -27,6 +27,7 @@ export function makeMonorepoData(
     infraPackages,
     hasDb: infraPackages.includes('db') || infraPackages.includes('auth'),
     hasDbTurso: infraPackages.includes('db-turso'),
+    hasDbSqlite: infraPackages.includes('db-sqlite'),
     hasCache: infraPackages.includes('cache'),
     hasEventDriven: infraPackages.includes('event-driven'),
     hasAuth: infraPackages.includes('auth'),

@@ -26,6 +26,14 @@ import { generateDbTursoSchema } from "../templates/monorepo/packages/db-turso/s
 import { generateDbTursoDrizzleConfig } from "../templates/monorepo/packages/db-turso/drizzle-config.template";
 import { generateDbTursoMigrate } from "../templates/monorepo/packages/db-turso/migrate.template";
 
+// packages/db-sqlite
+import { generateDbSqlitePackageJson } from "../templates/monorepo/packages/db-sqlite/package-json.template";
+import { generateDbSqliteTsconfig } from "../templates/monorepo/packages/db-sqlite/tsconfig.template";
+import { generateDbSqliteIndex } from "../templates/monorepo/packages/db-sqlite/index.template";
+import { generateDbSqliteSchema } from "../templates/monorepo/packages/db-sqlite/schema.template";
+import { generateDbSqliteDrizzleConfig } from "../templates/monorepo/packages/db-sqlite/drizzle-config.template";
+import { generateDbSqliteMigrate } from "../templates/monorepo/packages/db-sqlite/migrate.template";
+
 // packages/cache
 import { generateCachePackageJson } from "../templates/monorepo/packages/cache/package-json.template";
 import { generateCacheTsconfig } from "../templates/monorepo/packages/cache/tsconfig.template";
@@ -86,6 +94,7 @@ function buildMonorepoData(
     infraPackages: [],
     hasDb: template === "db",
     hasDbTurso: template === "db-turso",
+    hasDbSqlite: template === "db-sqlite",
     hasCache: template === "cache",
     hasEventDriven: template === "event-driven",
     hasAuth: template === "auth",
@@ -145,6 +154,15 @@ function collectFiles(
         { path: "src/index.ts", content: generateDbTursoIndex(data) },
         { path: "src/schema.ts", content: generateDbTursoSchema(data) },
         { path: "src/migrate.ts", content: generateDbTursoMigrate(data) },
+      ];
+    case "db-sqlite":
+      return [
+        { path: "package.json", content: generateDbSqlitePackageJson(data) },
+        { path: "tsconfig.json", content: generateDbSqliteTsconfig(data) },
+        { path: "drizzle.config.ts", content: generateDbSqliteDrizzleConfig(data) },
+        { path: "src/index.ts", content: generateDbSqliteIndex(data) },
+        { path: "src/schema.ts", content: generateDbSqliteSchema(data) },
+        { path: "src/migrate.ts", content: generateDbSqliteMigrate(data) },
       ];
     case "cache":
       return [
